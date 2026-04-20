@@ -15,26 +15,24 @@ O sistema escolhido dentre as aplicações listadas (https://github.com/orgs/rep
 
 # 📁 Estrutura do Projeto
 
-trabalho-qualidade-e-teste-aprovados
-	01-codigo-fonte-original
+01-codigo-fonte-original
 
-	02-codigo-ajustado
-		winxbank
-		src
-			main/java/br/winxbank → Código principal
-			test/java/br/winxbank/test → Testes unitários
-		pom.xml → Configuração Maven
-		README.md → Documentação do projeto
-		banco.txt → Base de dados simulada
-		clientes.json → Dados de clientes
-		mesAtual.txt → Controle de data
-	03-documentacao
-		Casos de Teste
-		Plano de Teste - Aprovados
-	04-apresentacao
-		Primeira Apresentacao	
+02-codigo-ajustado
+	winxbank
+	src
+		main/java/br/winxbank → Código principal
+		test/java/br/winxbank/test → Testes unitários
+	pom.xml → Configuração Maven
+	README.md → Documentação do projeto
+	banco.txt → Base de dados simulada
+	clientes.json → Dados de clientes
+	mesAtual.txt → Controle de data
+03-documentacao
+	Casos de Teste
+	Plano de Teste - Aprovados
+04-apresentacao
+	Primeira Apresentacao	
 
----
 
 # 📌 Descrição das Pastas
 
