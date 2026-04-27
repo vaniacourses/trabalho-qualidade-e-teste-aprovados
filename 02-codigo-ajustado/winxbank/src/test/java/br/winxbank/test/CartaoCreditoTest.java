@@ -153,4 +153,27 @@ public class CartaoCreditoTest {
 
         verify(cartao, times(1)).movimentacaoBancaria(anyDouble());
     }
+    
+    @Test
+    void testNaoDeveAjustarLimiteComValorNegativo() throws Exception {
+
+        System.out.println("Teste nao deve ajustar limite com valor negativo");
+
+        CartaoCredito cartao = criarCartao(0.0, 0, true, LIMITE_PADRAO);
+
+        String entradaUsuario = "-500\n";
+        System.setIn(new java.io.ByteArrayInputStream(entradaUsuario.getBytes()));
+
+        cartao.ajustarLimite();
+
+        java.lang.reflect.Field campoLimite = CartaoCredito.class.getDeclaredField("limite");
+        campoLimite.setAccessible(true);
+
+        double limiteAtual = campoLimite.getDouble(cartao);
+
+        System.out.println("Limite esperado: " + LIMITE_PADRAO);
+        System.out.println("Limite atual: " + limiteAtual);
+
+        assertEquals(LIMITE_PADRAO, limiteAtual, 0.001);
+    }
 }
