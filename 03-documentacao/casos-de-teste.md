@@ -11,3 +11,7 @@ Testes manuais de criação de usuário:
 https://docs.google.com/document/d/1iNyr8mk7NZ6Eu1driCyZ2BmkI5urFX0T1j0MwPtk3Fw/edit?usp=sharing
 
 Funcionalidade: abertura e fechamento de conta. Link: https://docs.google.com/document/d/1INAk_2B7siHccxBJnalopc5u7NMtNWxJUYKshBGC2jo/edit?tab=t.0
+
+Testes Manuais de conversão de pontos cliente Winx: 
+
+https://docs.google.com/document/d/1F3RZR6NvKuF9yRQGPlh6y6QbOHbi5xyVVUVpFLZZgrc/edit?usp=sharing
