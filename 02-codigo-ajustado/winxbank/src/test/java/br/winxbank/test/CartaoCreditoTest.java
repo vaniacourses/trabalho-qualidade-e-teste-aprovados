@@ -1,13 +1,19 @@
 package br.winxbank.test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.anyDouble;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
 
+import br.winxbank.sistemabancario.Banco;
 import br.winxbank.sistemabancario.CartaoCredito;
 import br.winxbank.tempo.Ano;
 
@@ -23,6 +29,13 @@ public class CartaoCreditoTest {
         return new CartaoCredito(fatura, indexMesDaFatura, faturaPaga, limite, NUMERO_PADRAO, CSV_PADRAO);
     }
 
+    @BeforeEach
+    void setUp() {
+        Ano.getInstancia().setMesAtual(MES_INICIAL);
+        Banco.getInstancia().setReceitas(0.0);
+        Banco.getInstancia().setDespesas(0.0);
+    }
+
     @Test
     void testCreditarValorDentroDoLimite() throws Exception {
 
@@ -30,11 +43,9 @@ public class CartaoCreditoTest {
 
         double valorCompra = 500.0;
 
-        Ano.getInstancia().setMesAtual(MES_INICIAL);
-
         CartaoCredito cartao = criarCartao(0.0, 0, true, LIMITE_PADRAO);
 
-        cartao.creditar(valorCompra);
+        cartao.creditar(valorCompra, 0, MES_INICIAL);
 
         double fatura = cartao.getFatura();
 
@@ -42,6 +53,8 @@ public class CartaoCreditoTest {
         System.out.println("Fatura: " + fatura);
 
         assertEquals(500.0, fatura, 0.001);
+        assertEquals(0, cartao.getIndexMesDaFatura());
+        assertEquals(MES_INICIAL, cartao.getMesDaFatura());
     }
 
     @Test
@@ -51,11 +64,9 @@ public class CartaoCreditoTest {
 
         double valorCompra = 1200.0;
 
-        Ano.getInstancia().setMesAtual(MES_INICIAL);
-
         CartaoCredito cartao = criarCartao(0.0, 0, true, LIMITE_PADRAO);
 
-        cartao.creditar(valorCompra);
+        cartao.creditar(valorCompra, 0, MES_INICIAL);
 
         double fatura = cartao.getFatura();
 
@@ -72,20 +83,40 @@ public class CartaoCreditoTest {
 
         double faturaInicial = 500.0;
 
-        Ano.getInstancia().setMesAtual(MES_INICIAL);
-
         CartaoCredito cartao = criarCartao(faturaInicial, 0, true, LIMITE_PADRAO);
 
-        Ano.getInstancia().setMesAtual(MES_POSTERIOR);
-
-        cartao.cobrarJurus();
+        cartao.cobrarJurus(1);
 
         double faturaFinal = cartao.getFatura();
 
         System.out.println("Fatura inicial: " + faturaInicial);
         System.out.println("Fatura final: " + faturaFinal);
 
-        assertEquals(500.0, faturaFinal, 0.001);
+        assertEquals(faturaInicial, faturaFinal, 0.001);
+    }
+
+    @Test
+    void testNaoDeveCobrarJurosQuandoMesAtualIgualMesDaFatura() throws Exception {
+
+        System.out.println("Teste nao deve cobrar juros quando mes atual e igual ao mes da fatura");
+
+        double faturaInicial = 500.0;
+
+        CartaoCredito cartao = spy(criarCartao(faturaInicial, 0, false, LIMITE_PADRAO));
+
+        doNothing().when(cartao).movimentacaoBancaria(anyDouble());
+
+        cartao.cobrarJurus(0);
+
+        double faturaFinal = cartao.getFatura();
+
+        System.out.println("Fatura inicial: " + faturaInicial);
+        System.out.println("Fatura final: " + faturaFinal);
+        System.out.println("Movimentacao bancaria nao deve ser chamada");
+
+        assertEquals(faturaInicial, faturaFinal, 0.001);
+
+        verify(cartao, times(0)).movimentacaoBancaria(anyDouble());
     }
 
     @Test
@@ -95,11 +126,9 @@ public class CartaoCreditoTest {
 
         double valorCompra = 1000.0;
 
-        Ano.getInstancia().setMesAtual(MES_INICIAL);
-
         CartaoCredito cartao = criarCartao(0.0, 0, true, LIMITE_PADRAO);
 
-        cartao.creditar(valorCompra);
+        cartao.creditar(valorCompra, 0, MES_INICIAL);
 
         double fatura = cartao.getFatura();
 
@@ -117,12 +146,10 @@ public class CartaoCreditoTest {
         double primeiraCompra = 800.0;
         double segundaCompra = 300.0;
 
-        Ano.getInstancia().setMesAtual(MES_INICIAL);
-
         CartaoCredito cartao = criarCartao(0.0, 0, true, LIMITE_PADRAO);
 
-        cartao.creditar(primeiraCompra);
-        cartao.creditar(segundaCompra);
+        cartao.creditar(primeiraCompra, 0, MES_INICIAL);
+        cartao.creditar(segundaCompra, 0, MES_INICIAL);
 
         double fatura = cartao.getFatura();
 
@@ -140,20 +167,24 @@ public class CartaoCreditoTest {
 
         double faturaInicial = 500.0;
 
-        Ano.getInstancia().setMesAtual(MES_INICIAL);
-
         CartaoCredito cartao = spy(criarCartao(faturaInicial, 0, false, LIMITE_PADRAO));
 
-        Ano.getInstancia().setMesAtual(MES_POSTERIOR);
+        doNothing().when(cartao).movimentacaoBancaria(anyDouble());
 
-        cartao.cobrarJurus();
+        cartao.cobrarJurus(1);
+
+        ArgumentCaptor<Double> captor = ArgumentCaptor.forClass(Double.class);
+
+        verify(cartao, times(1)).movimentacaoBancaria(captor.capture());
+
+        double valorMovimentado = captor.getValue();
 
         System.out.println("Fatura inicial: " + faturaInicial);
-        System.out.println("Movimentacao bancaria deve ser chamada uma vez");
+        System.out.println("Valor movimentado: " + valorMovimentado);
 
-        verify(cartao, times(1)).movimentacaoBancaria(anyDouble());
+        assertTrue(valorMovimentado > 0);
     }
-    
+
     @Test
     void testNaoDeveAjustarLimiteComValorNegativo() throws Exception {
 
@@ -161,19 +192,48 @@ public class CartaoCreditoTest {
 
         CartaoCredito cartao = criarCartao(0.0, 0, true, LIMITE_PADRAO);
 
-        String entradaUsuario = "-500\n";
-        System.setIn(new java.io.ByteArrayInputStream(entradaUsuario.getBytes()));
+        assertThrows(IllegalArgumentException.class, () -> {
+            cartao.ajustarLimite(-500.0);
+        });
 
-        cartao.ajustarLimite();
-
-        java.lang.reflect.Field campoLimite = CartaoCredito.class.getDeclaredField("limite");
-        campoLimite.setAccessible(true);
-
-        double limiteAtual = campoLimite.getDouble(cartao);
+        double limiteAtual = cartao.getLimite();
 
         System.out.println("Limite esperado: " + LIMITE_PADRAO);
         System.out.println("Limite atual: " + limiteAtual);
 
         assertEquals(LIMITE_PADRAO, limiteAtual, 0.001);
+    }
+
+    @Test
+    void testDeveAjustarLimiteComValorPositivo() throws Exception {
+
+        System.out.println("Teste deve ajustar limite com valor positivo");
+
+        CartaoCredito cartao = criarCartao(0.0, 0, true, LIMITE_PADRAO);
+
+        cartao.ajustarLimite(2000.0);
+
+        double limiteAtual = cartao.getLimite();
+
+        System.out.println("Limite esperado: 2000.0");
+        System.out.println("Limite atual: " + limiteAtual);
+
+        assertEquals(2000.0, limiteAtual, 0.001);
+    }
+
+    @Test
+    void testSetFaturaComValorQueZeraFaturaMarcaComoPaga() throws Exception {
+
+        System.out.println("Teste setFatura com valor que zera fatura marca como paga");
+
+        CartaoCredito cartao = criarCartao(500.0, 0, false, LIMITE_PADRAO);
+
+        cartao.setFatura(-500.0);
+
+        System.out.println("Fatura final: " + cartao.getFatura());
+        System.out.println("Fatura paga: " + cartao.isFaturaPaga());
+
+        assertEquals(0.0, cartao.getFatura(), 0.001);
+        assertTrue(cartao.isFaturaPaga());
     }
 }
