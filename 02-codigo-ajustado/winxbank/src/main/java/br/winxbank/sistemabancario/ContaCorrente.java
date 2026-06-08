@@ -7,6 +7,10 @@ import java.util.Scanner;
  */
 public class ContaCorrente extends Conta implements OperacoesAutomaticas{
 
+    private static final int OPCAO_DEBITO = 1;
+    private static final int OPCAO_CREDITO = 2;
+    private static final int CONFIRMAR = 1;
+
     private CartaoCredito cartaoCredito;
 
     /**
@@ -58,8 +62,22 @@ public class ContaCorrente extends Conta implements OperacoesAutomaticas{
     }
 
     public String getTipoDaConta() {
-        String tipoDaConta = "Corrente";
-        return tipoDaConta;
+        return "Corrente";
+    }
+
+    /**
+     * Exibe os dados de um cartao e solicita confirmacao do usuario.
+     * @param sc Scanner para leitura de entrada
+     * @param cartao Cartao a ser exibido
+     * @return true se o usuario confirmar (digitar 1)
+     */
+    private boolean exibirCartaoEConfirmar(Scanner sc, Cartao cartao) {
+        System.out.println("------------------------------------------------");
+        System.out.println(cartao.getNumero() + "\n" + cartao.getCsv());
+        System.out.println("------------------------------------------------");
+        System.out.println("Este e o cartao que deseja utilizar? Digite 1 (confirmar)");
+        int decisao2 = sc.nextInt();
+        return decisao2 == CONFIRMAR;
     }
 
     /**
@@ -67,17 +85,13 @@ public class ContaCorrente extends Conta implements OperacoesAutomaticas{
      * @param valor
      */
     @Override
+    @SuppressWarnings("resource")
     public void comprar(double valor) {
         Scanner sc = new Scanner(System.in);
         System.out.println("Você deseja pagar no debito ou no credito? 1 (debito) ou 2 (credito)");
         int decisao = sc.nextInt();
-        if (decisao == 1){
-            System.out.println("------------------------------------------------");
-            System.out.println(this.cartao.getNumero() + "\n" + this.cartao.csv);
-            System.out.println("------------------------------------------------");
-            System.out.println("Este e o cartao que deseja utilizar? Digite 1 (confirmar)");
-            int decisao2 = sc.nextInt();
-            if(decisao2 == 1){
+        if (decisao == OPCAO_DEBITO){
+            if(exibirCartaoEConfirmar(sc, this.cartao)){
                 cartao.debitar(this, valor);
                 System.out.println("Valor debitado.");
             }
@@ -85,13 +99,8 @@ public class ContaCorrente extends Conta implements OperacoesAutomaticas{
                 System.out.println("Compra cancelada. Efetue a compra novamente.");
             }
         }
-        else if(decisao == 2){
-            System.out.println("------------------------------------------------");
-            System.out.println(this.cartaoCredito.getNumero() + "\n" + this.cartaoCredito.csv);
-            System.out.println("------------------------------------------------");
-            System.out.println("Este e o cartao que deseja utilizar? Digite 1 (confirmar)");
-            int decisao2 = sc.nextInt();
-            if(decisao2 == 1){
+        else if(decisao == OPCAO_CREDITO){
+            if(exibirCartaoEConfirmar(sc, this.cartaoCredito)){
                 this.cartaoCredito.creditar(valor);
                 System.out.println("Valor creditado.");
             }
