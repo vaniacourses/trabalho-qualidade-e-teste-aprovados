@@ -92,8 +92,13 @@ public class WinxBankGUI extends JFrame {
         JLabel sub = new JLabel("Sistema bancario digital");
         sub.setFont(WinxTheme.FONTE_PEQUENA);
         sub.setForeground(new Color(255, 255, 255, 200));
+        marca.setAlignmentX(java.awt.Component.LEFT_ALIGNMENT);
+        sub.setAlignmentX(java.awt.Component.LEFT_ALIGNMENT);
+        // Glue acima e abaixo centraliza o titulo verticalmente no cabecalho.
+        titulos.add(javax.swing.Box.createVerticalGlue());
         titulos.add(marca);
         titulos.add(sub);
+        titulos.add(javax.swing.Box.createVerticalGlue());
 
         mesLabel.setFont(WinxTheme.FONTE_SUBTITULO);
         mesLabel.setForeground(Color.WHITE);
