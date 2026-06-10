@@ -118,9 +118,10 @@
                 </dependencies>
 
                 <configuration>
-                    <!-- Classe-alvo do teste estrutural e de mutação -->
+                    <!-- Classes-alvo do teste estrutural e de mutação -->
                     <targetClasses>
                         <param>br.winxbank.sistemabancario.CartaoCredito</param>
+                        <param>br.winxbank.sistemabancario.ContaCorrente</param>
                     </targetClasses>
 
                     <!-- Testes usados para matar os mutantes -->
@@ -128,6 +129,9 @@
                         <param>br.winxbank.test.CartaoCreditoTest</param>
                         <param>br.winxbank.test.CartaoCreditoFuncionalTest</param>
                         <param>br.winxbank.test.IntegracaoCartaoCreditoTest</param>
+                        <param>br.winxbank.test.ContaCorrenteTest</param>
+                        <param>br.winxbank.test.ContaCorrenteFuncionalTest</param>
+                        <param>br.winxbank.test.IntegracaoContaCorrenteTest</param>
                     </targetTests>
 
                     <outputFormats>
