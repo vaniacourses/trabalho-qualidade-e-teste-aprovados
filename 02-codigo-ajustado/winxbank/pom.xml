@@ -120,12 +120,16 @@
                 <configuration>
                     <!-- Classes-alvo do teste estrutural e de mutação -->
                     <targetClasses>
+                        <param>br.winxbank.sistemabancario.Banco</param>
                         <param>br.winxbank.sistemabancario.CartaoCredito</param>
                         <param>br.winxbank.sistemabancario.ContaCorrente</param>
                     </targetClasses>
 
                     <!-- Testes usados para matar os mutantes -->
                     <targetTests>
+                        <param>br.winxbank.test.BancoTest</param>
+                        <param>br.winxbank.test.BancoFuncionalTest</param>
+                        <param>br.winxbank.test.IntegracaoBancoTest</param>
                         <param>br.winxbank.test.CartaoCreditoTest</param>
                         <param>br.winxbank.test.CartaoCreditoFuncionalTest</param>
                         <param>br.winxbank.test.IntegracaoCartaoCreditoTest</param>
