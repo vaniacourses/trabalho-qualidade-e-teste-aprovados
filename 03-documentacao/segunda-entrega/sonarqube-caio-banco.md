@@ -71,3 +71,18 @@ impacta código compartilhado de toda a equipe e/ou o design da aplicação:
 
 Essas decisões estão alinhadas ao espírito do SonarQube (avaliar e justificar), priorizando
 a correção do que tem maior severidade e menor risco para a entrega.
+
+---
+
+## Prints (evidências antes/depois)
+
+Capturados do dashboard do SonarQube (`localhost:9000`), pasta `prints-sonarqube/`:
+
+| Print | Arquivo | O que mostra |
+|---|---|---|
+| ANTES — Banco | `prints-sonarqube/01-antes-banco-measures.png` | `Banco.java` com **14 code smells** (+ 1 bug em Reliability) |
+| ANTES — Visão geral | `prints-sonarqube/02-antes-overview.png` | Dashboard do projeto antes das correções |
+| DEPOIS — Banco | `prints-sonarqube/03-depois-banco-measures.png` | `Banco.java` com **13 code smells** e **0 bug** |
+| DEPOIS — Visão geral | `prints-sonarqube/04-depois-overview.png` | Dashboard do projeto após as correções |
+
+> Diferença visível: o **bug do `Random` (S2119)** e o **code smell crítico de complexidade (S3776)** somem entre o "antes" e o "depois".
