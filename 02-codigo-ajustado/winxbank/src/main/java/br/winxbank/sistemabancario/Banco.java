@@ -20,6 +20,7 @@ public class Banco implements Serializable {
     public double receitas;
     public double despesas;
     private static Banco instancia;
+    private final transient Random randomNum = new Random();
 
     /**
      * Método responsável por abrir uma nova conta.
@@ -78,20 +79,29 @@ public class Banco implements Serializable {
      * Tais quais: acrescentar rendimento em uma poupança e cobrar jurus da fatura do cartao de credito e descontar taxa de uma conta corrente.
      */
     public void movimentarEntreBancoConta(){
-        if(!(RegistroDeClientes.getInstancia().getClientes().isEmpty())){
-            for(Cliente cliente : RegistroDeClientes.getInstancia().getClientes()){
-                for(Conta conta : cliente.getContas()){
-                    conta.cobrarJurusEmprestimo();
-                    if(conta.getClass() == ContaPoupanca.class){
-                        ((ContaPoupanca) conta).acrescentarRendimento();
-                    }
-                    else if(conta.getClass() == ContaCorrente.class){
-                        ((ContaCorrente) conta).descontarTaxa();
-                        if(((ContaCorrente) conta).getCartaoCredito().getFatura() > 0){
-                            ((ContaCorrente) conta).getCartaoCredito().cobrarJurus();
-                        }
-                    }
-                }
+        for(Cliente cliente : RegistroDeClientes.getInstancia().getClientes()){
+            for(Conta conta : cliente.getContas()){
+                processarMovimentacaoDaConta(conta);
+            }
+        }
+    }
+
+    /**
+     * Processa as movimentações automáticas de uma única conta:
+     * cobrança de juros do empréstimo e, conforme o tipo da conta,
+     * rendimento (poupança) ou desconto de taxa e juros do cartão (corrente).
+     * @param conta conta a ser processada
+     */
+    private void processarMovimentacaoDaConta(Conta conta){
+        conta.cobrarJurusEmprestimo();
+        if(conta.getClass() == ContaPoupanca.class){
+            ((ContaPoupanca) conta).acrescentarRendimento();
+        }
+        else if(conta.getClass() == ContaCorrente.class){
+            ContaCorrente contaCorrente = (ContaCorrente) conta;
+            contaCorrente.descontarTaxa();
+            if(contaCorrente.getCartaoCredito().getFatura() > 0){
+                contaCorrente.getCartaoCredito().cobrarJurus();
             }
         }
     }
@@ -100,7 +110,6 @@ public class Banco implements Serializable {
      * Método responsável por visualizar detalhes do banco.
      */
     public void printarBanco(){
-        Random randomNum = new Random();
         System.out.println("Despesas do banco: " + new DecimalFormat("0.00").format(this.despesas));
         System.out.println("Receitas do banco: " + new DecimalFormat("0.00").format(this.receitas));
         if(this.despesas > this.receitas){
