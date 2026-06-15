@@ -73,6 +73,29 @@
                 </configuration>
             </plugin>
 
+            <!-- Gera um "fat jar" com as dependências embutidas para que
+                 'java -jar winxbank-1.0.jar' funcione (necessário para os testes E2E). -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <version>3.5.1</version>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                        <configuration>
+                            <transformers>
+                                <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                                    <mainClass>br.winxbank.Main</mainClass>
+                                </transformer>
+                            </transformers>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
             <!-- Execução dos testes JUnit 5 -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -120,12 +143,16 @@
                 <configuration>
                     <!-- Classes-alvo do teste estrutural e de mutação -->
                     <targetClasses>
+                        <param>br.winxbank.sistemabancario.Banco</param>
                         <param>br.winxbank.sistemabancario.CartaoCredito</param>
                         <param>br.winxbank.sistemabancario.ContaCorrente</param>
                     </targetClasses>
 
                     <!-- Testes usados para matar os mutantes -->
                     <targetTests>
+                        <param>br.winxbank.test.BancoTest</param>
+                        <param>br.winxbank.test.BancoFuncionalTest</param>
+                        <param>br.winxbank.test.IntegracaoBancoTest</param>
                         <param>br.winxbank.test.CartaoCreditoTest</param>
                         <param>br.winxbank.test.CartaoCreditoFuncionalTest</param>
                         <param>br.winxbank.test.IntegracaoCartaoCreditoTest</param>

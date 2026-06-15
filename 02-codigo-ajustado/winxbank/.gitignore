@@ -1,5 +1,9 @@
 # Maven
 target/
+dependency-reduced-pom.xml
+
+# Arquivo de controle de mes gerado em runtime
+mesAtual.txt
 
 # Java
 *.class
