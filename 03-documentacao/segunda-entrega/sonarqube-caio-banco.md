@@ -76,13 +76,13 @@ a correção do que tem maior severidade e menor risco para a entrega.
 
 ## Prints (evidências antes/depois)
 
-Capturados do dashboard do SonarQube (`localhost:9000`), pasta `prints-sonarqube/`:
+Capturados da página **Measures** do SonarQube (`localhost:9000`), aba **Overall Code**, pasta `prints-sonarqube/`:
 
 | Print | Arquivo | O que mostra |
 |---|---|---|
-| ANTES — Banco | `prints-sonarqube/01-antes-banco-measures.png` | `Banco.java` com **14 code smells** (+ 1 bug em Reliability) |
-| ANTES — Visão geral | `prints-sonarqube/02-antes-overview.png` | Dashboard do projeto antes das correções |
-| DEPOIS — Banco | `prints-sonarqube/03-depois-banco-measures.png` | `Banco.java` com **13 code smells** e **0 bug** |
-| DEPOIS — Visão geral | `prints-sonarqube/04-depois-overview.png` | Dashboard do projeto após as correções |
+| **ANTES** | `prints-sonarqube/01-antes-banco-measures.png` | `Banco.java` com **14 code smells** (+ 1 bug em Reliability) e o código original |
+| **DEPOIS** | `prints-sonarqube/02-depois-banco-measures.png` | `Banco.java` com **13 code smells** e **0 bug**, já com o campo `Random` extraído |
 
 > Diferença visível: o **bug do `Random` (S2119)** e o **code smell crítico de complexidade (S3776)** somem entre o "antes" e o "depois".
+>
+> *Observação:* a tela de **Overview** não foi usada como evidência porque abre na aba "New Code" (vazia nesta 1ª análise) e o Quality Gate dela oscila por um Security Hotspot de *new code* — fatores alheios à correção da `Banco`. A página **Measures** (acima) reflete corretamente o antes/depois.
