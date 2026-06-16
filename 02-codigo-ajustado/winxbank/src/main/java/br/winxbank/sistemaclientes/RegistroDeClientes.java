@@ -29,7 +29,7 @@ public class RegistroDeClientes {
         boolean cpfDisponivel = checarCpf(cpf);
         if(cpfDisponivel){
             Cliente cliente = new Cliente(nome, cpf);
-            Conta conta = Banco.getInstancia().abrirNovaConta();
+            Conta conta = Banco.getInstancia().abrirNovaConta(sc);
             cliente.setContas(conta);
             Movimentacao movimentacao = new Movimentacao(conta.getSaldo(), Movimentacao.TipoDaMovimentacao.ENTRADA);
             conta.setExtrato(movimentacao);

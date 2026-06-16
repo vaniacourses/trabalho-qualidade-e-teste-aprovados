@@ -84,7 +84,7 @@ public class RegistroDeClientesTest {
         try (MockedStatic<Banco> bancoMock = Mockito.mockStatic(Banco.class)) {
             Banco banco = mock(Banco.class);
             bancoMock.when(Banco::getInstancia).thenReturn(banco);
-            when(banco.abrirNovaConta()).thenReturn(conta);
+            when(banco.abrirNovaConta(any(java.util.Scanner.class))).thenReturn(conta);
 
             simularEntrada("Maria\n123.456.789-00\n");
             registro.cadastrarCliente();
@@ -106,7 +106,7 @@ public class RegistroDeClientesTest {
         try (MockedStatic<Banco> bancoMock = Mockito.mockStatic(Banco.class)) {
             Banco banco = mock(Banco.class);
             bancoMock.when(Banco::getInstancia).thenReturn(banco);
-            when(banco.abrirNovaConta()).thenReturn(conta);
+            when(banco.abrirNovaConta(any(java.util.Scanner.class))).thenReturn(conta);
 
             simularEntrada("Carlos\n999.888.777-66\n");
             registro.cadastrarCliente();
@@ -128,7 +128,7 @@ public class RegistroDeClientesTest {
         try (MockedStatic<Banco> bancoMock = Mockito.mockStatic(Banco.class)) {
             Banco banco = mock(Banco.class);
             bancoMock.when(Banco::getInstancia).thenReturn(banco);
-            when(banco.abrirNovaConta()).thenReturn(conta);
+            when(banco.abrirNovaConta(any(java.util.Scanner.class))).thenReturn(conta);
 
             simularEntrada("Ana\n111.222.333-44\n");
             registro.cadastrarCliente();
@@ -147,7 +147,7 @@ public class RegistroDeClientesTest {
         try (MockedStatic<Banco> bancoMock = Mockito.mockStatic(Banco.class)) {
             Banco banco = mock(Banco.class);
             bancoMock.when(Banco::getInstancia).thenReturn(banco);
-            when(banco.abrirNovaConta()).thenReturn(conta);
+            when(banco.abrirNovaConta(any(java.util.Scanner.class))).thenReturn(conta);
 
             simularEntrada("Pedro\n555.666.777-88\n");
             registro.cadastrarCliente();
@@ -167,7 +167,7 @@ public class RegistroDeClientesTest {
         try (MockedStatic<Banco> bancoMock = Mockito.mockStatic(Banco.class)) {
             Banco banco = mock(Banco.class);
             bancoMock.when(Banco::getInstancia).thenReturn(banco);
-            when(banco.abrirNovaConta()).thenReturn(conta);
+            when(banco.abrirNovaConta(any(java.util.Scanner.class))).thenReturn(conta);
 
             simularEntrada("Rica\n888.999.000-11\n");
             registro.cadastrarCliente();
@@ -198,7 +198,7 @@ public class RegistroDeClientesTest {
 
             assertEquals(1, registro.getClientes().size(),
                     "Nao deve adicionar cliente com CPF duplicado");
-            verify(banco, never()).abrirNovaConta();
+            verify(banco, never()).abrirNovaConta(any(java.util.Scanner.class));
         }
 
         System.setOut(originalOut);
@@ -218,7 +218,7 @@ public class RegistroDeClientesTest {
         try (MockedStatic<Banco> bancoMock = Mockito.mockStatic(Banco.class)) {
             Banco banco = mock(Banco.class);
             bancoMock.when(Banco::getInstancia).thenReturn(banco);
-            when(banco.abrirNovaConta()).thenReturn(conta);
+            when(banco.abrirNovaConta(any(java.util.Scanner.class))).thenReturn(conta);
 
             simularEntrada("Primeiro\n000.000.000-00\n");
             registro.cadastrarCliente();
@@ -238,7 +238,7 @@ public class RegistroDeClientesTest {
         try (MockedStatic<Banco> bancoMock = Mockito.mockStatic(Banco.class)) {
             Banco banco = mock(Banco.class);
             bancoMock.when(Banco::getInstancia).thenReturn(banco);
-            when(banco.abrirNovaConta()).thenReturn(conta);
+            when(banco.abrirNovaConta(any(java.util.Scanner.class))).thenReturn(conta);
 
             simularEntrada("Joao\n111.111.111-11\n");
             registro.cadastrarCliente();
@@ -260,7 +260,7 @@ public class RegistroDeClientesTest {
         try (MockedStatic<Banco> bancoMock = Mockito.mockStatic(Banco.class)) {
             Banco banco = mock(Banco.class);
             bancoMock.when(Banco::getInstancia).thenReturn(banco);
-            when(banco.abrirNovaConta()).thenReturn(conta1, conta2);
+            when(banco.abrirNovaConta(any(java.util.Scanner.class))).thenReturn(conta1, conta2);
 
             simularEntrada("Alice\n111.111.111-11\n");
             registro.cadastrarCliente();

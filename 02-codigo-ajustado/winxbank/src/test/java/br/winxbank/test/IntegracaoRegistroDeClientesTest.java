@@ -2,6 +2,9 @@ package br.winxbank.test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -54,6 +57,30 @@ public class IntegracaoRegistroDeClientesTest {
     private ContaPoupanca criarContaPoupanca(int numeroConta, double saldo) {
         Cartao cartao = new Cartao(NUMERO_CARTAO, CSV_PADRAO);
         return new ContaPoupanca(numeroConta, saldo, cartao, 0);
+    }
+
+    @Test
+    void testCadastroClienteComContaCorrenteFluxoReal() {
+        System.out.println("=== INTEGRACAO: Fluxo real cadastrarCliente + Banco.abrirNovaConta ===");
+
+        InputStream originalIn = System.in;
+        try {
+            System.setIn(new ByteArrayInputStream("Fernando Rene\n333.444.555-66\n1\n5000\n".getBytes()));
+
+            RegistroDeClientes.getInstancia().cadastrarCliente();
+
+            Cliente encontrado = RegistroDeClientes.getInstancia().retornarCliente("333.444.555-66");
+            assertNotNull(encontrado);
+            assertEquals("Fernando Rene", encontrado.getNome());
+            assertEquals(1, encontrado.getContas().size());
+            assertTrue(encontrado.getContas().get(0) instanceof ContaCorrente);
+            assertEquals(5000.0, encontrado.getContas().get(0).getSaldo(), 0.001);
+            assertFalse(encontrado.getContas().get(0).getExtrato().isEmpty());
+        } finally {
+            System.setIn(originalIn);
+        }
+
+        System.out.println("=== FLUXO REAL CONCLUIDO ===");
     }
 
     @Test
