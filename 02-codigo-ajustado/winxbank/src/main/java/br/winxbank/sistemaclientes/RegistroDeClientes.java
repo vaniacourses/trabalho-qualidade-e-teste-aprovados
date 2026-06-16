@@ -26,29 +26,24 @@ public class RegistroDeClientes {
         String nome = sc.nextLine();
         System.out.println("Digite o cpf:");
         String cpf = sc.nextLine();
-        boolean cpfExistente = checarCpf(cpf);
-        if(cpfExistente || clientes.isEmpty()){
+        boolean cpfDisponivel = checarCpf(cpf);
+        if(cpfDisponivel){
             Cliente cliente = new Cliente(nome, cpf);
             Conta conta = Banco.getInstancia().abrirNovaConta();
             cliente.setContas(conta);
+            Movimentacao movimentacao = new Movimentacao(conta.getSaldo(), Movimentacao.TipoDaMovimentacao.ENTRADA);
+            conta.setExtrato(movimentacao);
+            if(conta instanceof ContaPoupanca){
+                ((ContaPoupanca) conta).setInformeRendimento(movimentacao);
+            }
             if(conta.getSaldo() >= 100000){
                 System.out.println("Parabéns, você tem direito a ser ClienteWinx!");
                 ClienteWinx clienteWinx = new ClienteWinx(nome, cpf, 0);
-                Movimentacao movimentacao = new Movimentacao(conta.getSaldo(), Movimentacao.TipoDaMovimentacao.ENTRADA);
-                conta.setExtrato(movimentacao);
                 clienteWinx.setContas(conta);
                 clientes.add(clienteWinx);
-                if(conta.getClass() == ContaPoupanca.class){
-                    ((ContaPoupanca) conta).setInformeRendimento(movimentacao);
-                }
             }
-            else if(conta.getSaldo() < 100000) {
-                Movimentacao movimentacao = new Movimentacao(conta.getSaldo(), Movimentacao.TipoDaMovimentacao.ENTRADA);
-                conta.setExtrato(movimentacao);
+            else{
                 clientes.add(cliente);
-                if(conta.getClass() == ContaPoupanca.class){
-                    ((ContaPoupanca) conta).setInformeRendimento(movimentacao);
-                }
             }
         }else{
             System.out.println("Usuario nao pode ser criado. CPF ja existente no registro.");
@@ -62,13 +57,12 @@ public class RegistroDeClientes {
     public void atualizarCliente(Cliente cliente) throws InterruptedException {
         System.out.println("Seu usuario está sendo atualizado...");
         for(int i = 0; i < clientes.size(); i++){
-            if(clientes.get(i).cpf.equals(cliente.cpf)){
-                clientes.remove(clientes.get(i));
+            if(clientes.get(i).getCpf().equals(cliente.getCpf())){
+                clientes.remove(i);
                 clientes.add(cliente);
+                break;
             }
-
         }
-
     }
 
     /**
@@ -78,8 +72,9 @@ public class RegistroDeClientes {
     public void removerCliente(Cliente cliente){
         System.out.println("Seu usuario está sendo apagado...");
         for(int i = 0; i < this.clientes.size(); i++){
-            if(this.clientes.get(i).cpf.equals(cliente.cpf)){
-                this.clientes.remove(this.clientes.get(i));
+            if(this.clientes.get(i).getCpf().equals(cliente.getCpf())){
+                this.clientes.remove(i);
+                break;
             }
         }
     }
@@ -91,7 +86,7 @@ public class RegistroDeClientes {
      */
     public boolean checarCpf(String cpf){
         for (Cliente cliente : clientes){
-            if(cliente.cpf.equals(cpf)){
+            if(cliente.getCpf().equals(cpf)){
                 return false;
             }
         }
@@ -104,11 +99,11 @@ public class RegistroDeClientes {
      */
     public void visualizarContas(Cliente cliente){
         for(Conta conta : cliente.getContas()){
-            if(conta.getClass() == ContaPoupanca.class){
-                System.out.println("[ Conta" + ((ContaPoupanca) conta).getTipoDaConta() + " no: " + conta.getNumeroConta() + " | Saldo: " + new DecimalFormat("0.00").format( conta.getSaldo()) + " | DividaEmprestimo: " + new DecimalFormat("0.00").format(conta.getDividaDeEmprestimo()) + " | Cartao Debito no: " + conta.getCartao().getNumero() +"| csv: "+ conta.getCartao().getCsv() + " ]");
+            if(conta instanceof ContaPoupanca contaPoupanca){
+                System.out.println("[ Conta" + contaPoupanca.getTipoDaConta() + " no: " + conta.getNumeroConta() + " | Saldo: " + new DecimalFormat("0.00").format( conta.getSaldo()) + " | DividaEmprestimo: " + new DecimalFormat("0.00").format(conta.getDividaDeEmprestimo()) + " | Cartao Debito no: " + conta.getCartao().getNumero() +"| csv: "+ conta.getCartao().getCsv() + " ]");
             }
-            else{
-                System.out.println("[ Conta" + ((ContaCorrente) conta).getTipoDaConta() + "no: " + conta.getNumeroConta() + " | Saldo: " + new DecimalFormat("0.00").format(conta.getSaldo()) + " | DividaEmprestimo: " + new DecimalFormat("0.00").format(conta.getDividaDeEmprestimo()) + " | Cartao Debito no: " + conta.getCartao().getNumero() +"| csv: "+ conta.getCartao().getCsv() + " | Cartao Credito no: " + ((ContaCorrente) conta).getCartaoCredito().getNumero() + "| csv: "+ ((ContaCorrente) conta).getCartaoCredito().getCsv() + "| fatura: "+  new DecimalFormat("0.00").format(((ContaCorrente) conta).getCartaoCredito().getFatura()) +" ]");
+            else if(conta instanceof ContaCorrente contaCorrente){
+                System.out.println("[ Conta" + contaCorrente.getTipoDaConta() + "no: " + conta.getNumeroConta() + " | Saldo: " + new DecimalFormat("0.00").format(conta.getSaldo()) + " | DividaEmprestimo: " + new DecimalFormat("0.00").format(conta.getDividaDeEmprestimo()) + " | Cartao Debito no: " + conta.getCartao().getNumero() +"| csv: "+ conta.getCartao().getCsv() + " | Cartao Credito no: " + contaCorrente.getCartaoCredito().getNumero() + "| csv: "+ contaCorrente.getCartaoCredito().getCsv() + "| fatura: "+  new DecimalFormat("0.00").format(contaCorrente.getCartaoCredito().getFatura()) +" ]");
             }
         }
     }
@@ -119,11 +114,11 @@ public class RegistroDeClientes {
      */
     public void visualizarDetalhesDoCliente(String cpf){
         for(Cliente cliente : clientes){
-            if(cliente.getClass() == ClienteWinx.class && cliente.cpf.equals(cpf)){
-                System.out.println("Nome: " + cliente.getNome() + " | CPF: " + cliente.getCpf() + " | Pontos por compra: " + ((ClienteWinx) cliente).getPontosDeCompra() + "\nContas:");
+            if(cliente instanceof ClienteWinx clienteWinx && cliente.getCpf().equals(cpf)){
+                System.out.println("Nome: " + cliente.getNome() + " | CPF: " + cliente.getCpf() + " | Pontos por compra: " + clienteWinx.getPontosDeCompra() + "\nContas:");
                 visualizarContas(cliente);
             }
-            else if(cliente.getClass() == Cliente.class && cliente.cpf.equals(cpf)){
+            else if(!(cliente instanceof ClienteWinx) && cliente.getCpf().equals(cpf)){
                 System.out.println("Nome: " + cliente.getNome() + "| CPF: " + cliente.getCpf() + "\nContas:");
                 visualizarContas(cliente);
             }
@@ -137,10 +132,7 @@ public class RegistroDeClientes {
      */
     public Cliente retornarCliente(String cpf){
         for (Cliente cliente : clientes) {
-            if(clientes.get(0) == null){
-                throw new NullPointerException("A lista esta nula, nao foi possivel buscar cliente");
-            }
-            else if (cliente.cpf.equals(cpf)) {
+            if (cliente.getCpf().equals(cpf)) {
                 return cliente;
             }
         }
@@ -153,16 +145,14 @@ public class RegistroDeClientes {
     public void printarListaDeClientes(){
         System.out.println("------------------ Clientes --------------------");
         for(Cliente cliente : clientes){
-            if(cliente.getClass() == ClienteWinx.class){
-                System.out.println("Nome: " + cliente.getNome() + " | CPF: " + cliente.getCpf() + " | Pontos por compra: " + ((ClienteWinx) cliente).getPontosDeCompra() + "\nContas:");
+            if(cliente instanceof ClienteWinx clienteWinx){
+                System.out.println("Nome: " + cliente.getNome() + " | CPF: " + cliente.getCpf() + " | Pontos por compra: " + clienteWinx.getPontosDeCompra() + "\nContas:");
             }
-            else if(cliente.getClass() == Cliente.class){
+            else{
                 System.out.println("Nome: " + cliente.getNome() + "| CPF: " + cliente.getCpf() + "\nContas:");
-
             }
             visualizarContas(cliente);
             System.out.println("------------------------------------------------");
-
         }
     }
 

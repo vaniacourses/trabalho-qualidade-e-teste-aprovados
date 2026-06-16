@@ -161,6 +161,7 @@
                         <param>br.winxbank.sistemabancario.Banco</param>
                         <param>br.winxbank.sistemabancario.CartaoCredito</param>
                         <param>br.winxbank.sistemabancario.ContaCorrente</param>
+                        <param>br.winxbank.sistemaclientes.RegistroDeClientes</param>
                     </targetClasses>
 
                     <!-- Testes usados para matar os mutantes -->
@@ -174,6 +175,9 @@
                         <param>br.winxbank.test.ContaCorrenteTest</param>
                         <param>br.winxbank.test.ContaCorrenteFuncionalTest</param>
                         <param>br.winxbank.test.IntegracaoContaCorrenteTest</param>
+                        <param>br.winxbank.test.RegistroDeClientesTest</param>
+                        <param>br.winxbank.test.RegistroDeClientesFuncionalTest</param>
+                        <param>br.winxbank.test.IntegracaoRegistroDeClientesTest</param>
                     </targetTests>
 
                     <outputFormats>
