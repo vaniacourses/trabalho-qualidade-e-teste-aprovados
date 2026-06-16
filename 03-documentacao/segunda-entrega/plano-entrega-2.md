@@ -12,7 +12,7 @@
 |1|Fernando Rene|fernandorcafilho|
 |2|Joao Omar|joaomar1|
 |3|Caio Marcio / Caio Silva|cakocaito|
-|4|Rafael (Disklo)|Disklo|
+|4|Rafael Lucio|Disklo|
 |5|Joao Victor Amaral|JvamleiteUff|
 
 \---
@@ -253,7 +253,7 @@ Plugins a adicionar para suportar a Entrega 2:
 * \[  ]
 * \[  ]
 
-### Rafael (Disklo)
+### Rafael Lucio
 
 * \[  ] Testes unitarios de `ContaCorrente` (1.4)
 * \[  ] Teste de integracao: pagarFatura + cartao (2.4)
@@ -277,4 +277,3 @@ Plugins a adicionar para suportar a Entrega 2:
 * \[  ] Teste mutacao >=80%: `Ano` (8.5)
 * \[  ] ISO 25010: Manutenibilidade + Portabilidade (9)
 * \[  ] Correcao SonarQube: `Ano` (10)
-

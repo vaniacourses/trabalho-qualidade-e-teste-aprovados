@@ -489,6 +489,10 @@ public class ContaCorrenteTest {
         assertTrue(saida.contains("debito"), "Saida deve mencionar 'debito'");
         assertTrue(saida.contains("Valor debitado"), "Saida deve conter 'Valor debitado'");
         assertTrue(saida.contains("confirmar"), "Saida deve pedir confirmacao");
+        assertTrue(saida.contains(String.valueOf(NUMERO_CARTAO)), "Saida deve mostrar o numero do cartao");
+        assertTrue(saida.contains(String.valueOf(CSV_PADRAO)), "Saida deve mostrar o CSV do cartao");
+        int separadores = saida.split("------------------------------------------------", -1).length - 1;
+        assertTrue(separadores >= 2, "Saida deve conter separadores antes e depois do cartao. Encontrados: " + separadores);
     }
 
     @Test
@@ -509,6 +513,9 @@ public class ContaCorrenteTest {
 
         String saida = outContent.toString();
         assertTrue(saida.contains("cancelada"), "Saida deve conter 'cancelada'");
+        assertTrue(saida.contains(String.valueOf(NUMERO_CARTAO)), "Saida deve mostrar o numero do cartao ao confirmar");
+        int sepDebCancel = saida.split("------------------------------------------------", -1).length - 1;
+        assertTrue(sepDebCancel >= 2, "Saida deve conter separadores ao exibir cartao. Encontrados: " + sepDebCancel);
     }
 
     @Test
@@ -531,6 +538,9 @@ public class ContaCorrenteTest {
         assertTrue(saida.contains("credito"), "Saida deve mencionar 'credito'");
         assertTrue(saida.contains("Valor creditado"), "Saida deve conter 'Valor creditado'");
         assertTrue(saida.contains("confirmar"), "Saida deve pedir confirmacao");
+        assertTrue(saida.contains(String.valueOf(NUMERO_CARTAO)), "Saida deve mostrar o numero do cartao de credito");
+        int sepCredConfirm = saida.split("------------------------------------------------", -1).length - 1;
+        assertTrue(sepCredConfirm >= 2, "Saida deve conter separadores. Encontrados: " + sepCredConfirm);
     }
 
     @Test
@@ -551,5 +561,8 @@ public class ContaCorrenteTest {
 
         String saida = outContent.toString();
         assertTrue(saida.contains("cancelada"), "Saida deve conter 'cancelada'");
+        assertTrue(saida.contains(String.valueOf(NUMERO_CARTAO)), "Saida deve mostrar o numero do cartao de credito ao cancelar");
+        int sepCredCancel = saida.split("------------------------------------------------", -1).length - 1;
+        assertTrue(sepCredCancel >= 2, "Saida deve conter separadores. Encontrados: " + sepCredCancel);
     }
 }
