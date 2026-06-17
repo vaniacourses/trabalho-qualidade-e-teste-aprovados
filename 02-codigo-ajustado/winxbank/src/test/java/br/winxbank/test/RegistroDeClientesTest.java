@@ -1,12 +1,14 @@
 package br.winxbank.test;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.io.PrintStream;
+import java.util.Scanner;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -84,7 +86,7 @@ public class RegistroDeClientesTest {
         try (MockedStatic<Banco> bancoMock = Mockito.mockStatic(Banco.class)) {
             Banco banco = mock(Banco.class);
             bancoMock.when(Banco::getInstancia).thenReturn(banco);
-            when(banco.abrirNovaConta()).thenReturn(conta);
+            when(banco.abrirNovaConta(any(Scanner.class))).thenReturn(conta);
 
             simularEntrada("Maria\n123.456.789-00\n");
             registro.cadastrarCliente();
@@ -106,7 +108,7 @@ public class RegistroDeClientesTest {
         try (MockedStatic<Banco> bancoMock = Mockito.mockStatic(Banco.class)) {
             Banco banco = mock(Banco.class);
             bancoMock.when(Banco::getInstancia).thenReturn(banco);
-            when(banco.abrirNovaConta()).thenReturn(conta);
+            when(banco.abrirNovaConta(any(Scanner.class))).thenReturn(conta);
 
             simularEntrada("Carlos\n999.888.777-66\n");
             registro.cadastrarCliente();
@@ -128,7 +130,7 @@ public class RegistroDeClientesTest {
         try (MockedStatic<Banco> bancoMock = Mockito.mockStatic(Banco.class)) {
             Banco banco = mock(Banco.class);
             bancoMock.when(Banco::getInstancia).thenReturn(banco);
-            when(banco.abrirNovaConta()).thenReturn(conta);
+            when(banco.abrirNovaConta(any(Scanner.class))).thenReturn(conta);
 
             simularEntrada("Ana\n111.222.333-44\n");
             registro.cadastrarCliente();
@@ -147,7 +149,7 @@ public class RegistroDeClientesTest {
         try (MockedStatic<Banco> bancoMock = Mockito.mockStatic(Banco.class)) {
             Banco banco = mock(Banco.class);
             bancoMock.when(Banco::getInstancia).thenReturn(banco);
-            when(banco.abrirNovaConta()).thenReturn(conta);
+            when(banco.abrirNovaConta(any(Scanner.class))).thenReturn(conta);
 
             simularEntrada("Pedro\n555.666.777-88\n");
             registro.cadastrarCliente();
@@ -167,7 +169,7 @@ public class RegistroDeClientesTest {
         try (MockedStatic<Banco> bancoMock = Mockito.mockStatic(Banco.class)) {
             Banco banco = mock(Banco.class);
             bancoMock.when(Banco::getInstancia).thenReturn(banco);
-            when(banco.abrirNovaConta()).thenReturn(conta);
+            when(banco.abrirNovaConta(any(Scanner.class))).thenReturn(conta);
 
             simularEntrada("Rica\n888.999.000-11\n");
             registro.cadastrarCliente();
@@ -218,7 +220,7 @@ public class RegistroDeClientesTest {
         try (MockedStatic<Banco> bancoMock = Mockito.mockStatic(Banco.class)) {
             Banco banco = mock(Banco.class);
             bancoMock.when(Banco::getInstancia).thenReturn(banco);
-            when(banco.abrirNovaConta()).thenReturn(conta);
+            when(banco.abrirNovaConta(any(Scanner.class))).thenReturn(conta);
 
             simularEntrada("Primeiro\n000.000.000-00\n");
             registro.cadastrarCliente();
@@ -238,7 +240,7 @@ public class RegistroDeClientesTest {
         try (MockedStatic<Banco> bancoMock = Mockito.mockStatic(Banco.class)) {
             Banco banco = mock(Banco.class);
             bancoMock.when(Banco::getInstancia).thenReturn(banco);
-            when(banco.abrirNovaConta()).thenReturn(conta);
+            when(banco.abrirNovaConta(any(Scanner.class))).thenReturn(conta);
 
             simularEntrada("Joao\n111.111.111-11\n");
             registro.cadastrarCliente();
@@ -260,7 +262,7 @@ public class RegistroDeClientesTest {
         try (MockedStatic<Banco> bancoMock = Mockito.mockStatic(Banco.class)) {
             Banco banco = mock(Banco.class);
             bancoMock.when(Banco::getInstancia).thenReturn(banco);
-            when(banco.abrirNovaConta()).thenReturn(conta1, conta2);
+            when(banco.abrirNovaConta(any(Scanner.class))).thenReturn(conta1, conta2);
 
             simularEntrada("Alice\n111.111.111-11\n");
             registro.cadastrarCliente();

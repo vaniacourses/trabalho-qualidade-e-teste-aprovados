@@ -12,7 +12,7 @@ public class Ano {
     private String mesAtual;
     private int indexMesAtual;
     private String[] meses = {"Janeiro", "Fevereiro", "Marco", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"};
-    private static long count = 0;
+    private long count = 0;
 
     /**
      * Este método é responsável por fazer os meses do ano passar conforme um index de uma lista de meses que incrementa na medida em que o ususario interaje com o programa.

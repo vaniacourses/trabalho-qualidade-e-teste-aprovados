@@ -33,9 +33,6 @@ public class E2EPixTest {
 
     private static final String JAR_PATH = "target/winxbank-1.0.jar";
 
-    /**
-     * Verifica se o JAR existe antes de executar o teste.
-     */
     private boolean jarExiste() {
         File jar = new File(JAR_PATH);
         return jar.exists();

@@ -15,13 +15,16 @@ public class RegistroDeClientes {
 
     private static RegistroDeClientes instancia;
     private ArrayList<Cliente> clientes = new ArrayList<Cliente>();
+    
+    public void cadastrarCliente(){
+        cadastrarCliente(new Scanner(System.in));
+    }
 
     /**
      * Este método é responsável por cadastrar um cliente no registro de clientes.
      * Se o cliente criar uma conta com mais de 100 mil, ele se torna ClienteWix.
      */
-    public void cadastrarCliente(){
-        Scanner sc = new Scanner(System.in);
+    public void cadastrarCliente(Scanner sc){
         System.out.println("Você está cadastrando um cliente\nDigite o nome:");
         String nome = sc.nextLine();
         System.out.println("Digite o cpf:");
@@ -29,7 +32,7 @@ public class RegistroDeClientes {
         boolean cpfDisponivel = checarCpf(cpf);
         if(cpfDisponivel){
             Cliente cliente = new Cliente(nome, cpf);
-            Conta conta = Banco.getInstancia().abrirNovaConta();
+            Conta conta = Banco.getInstancia().abrirNovaConta(sc);
             cliente.setContas(conta);
             Movimentacao movimentacao = new Movimentacao(conta.getSaldo(), Movimentacao.TipoDaMovimentacao.ENTRADA);
             conta.setExtrato(movimentacao);
