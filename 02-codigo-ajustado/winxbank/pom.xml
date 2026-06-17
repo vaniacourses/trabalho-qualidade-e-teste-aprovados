@@ -120,7 +120,7 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>3.2.5</version>
                 <configuration>
-                    <argLine>${argLine} -javaagent:${bytebuddy.agent.path}</argLine>
+                    <argLine>@{argLine} -javaagent:${bytebuddy.agent.path}</argLine>
                 </configuration>
             </plugin>
 
@@ -175,6 +175,7 @@
                         <param>br.winxbank.sistemabancario.CartaoCredito</param>
                         <param>br.winxbank.sistemabancario.ContaCorrente</param>
                         <param>br.winxbank.sistemaclientes.RegistroDeClientes</param>
+                        <param>br.winxbank.tempo.Ano</param>
                     </targetClasses>
 
                     <!-- Testes usados para matar os mutantes -->
@@ -191,6 +192,7 @@
                         <param>br.winxbank.test.RegistroDeClientesTest</param>
                         <param>br.winxbank.test.RegistroDeClientesFuncionalTest</param>
                         <param>br.winxbank.test.IntegracaoRegistroDeClientesTest</param>
+                        <param>br.winxbank.test.AnoTest</param>
                     </targetTests>
 
                     <outputFormats>
