@@ -21,6 +21,10 @@ public class Banco implements Serializable {
     public double despesas;
     private static Banco instancia;
     private final transient Random randomNum = new Random();
+    
+    public Conta abrirNovaConta() {
+        return abrirNovaConta(new Scanner(System.in));
+    }
 
     /**
      * Método responsável por abrir uma nova conta.
@@ -36,8 +40,8 @@ public class Banco implements Serializable {
     public Conta abrirNovaConta(Scanner sc) {
         int decisao = 0;
         System.out.println("Qual tipo de conta conta deseja abrir? Digite 1 (Corrente) ou 2 (Poupanca)");
-        decisao = sc.nextInt();
-        if(decisao == 1){
+        int decisao = Integer.parseInt(sc.nextLine().trim());
+        if (decisao == 1) {
             System.out.println("Voce esta criando uma conta corrente...");
             int numeroCartao = RandomNumberGenerator.gerarNumCartao();
             int csv = RandomNumberGenerator.gerarCsv();
@@ -45,19 +49,19 @@ public class Banco implements Serializable {
             CartaoCredito cartaoCredito = new CartaoCredito(numeroCartao, csv);
             int numeroConta = RandomNumberGenerator.gerarNumConta();
             System.out.println("Digite o saldo que deseja colocar na sua conta ");
-            double saldo = sc.nextDouble();
+            double saldo = Double.parseDouble(sc.nextLine().trim());
             Conta contaCorrente = new ContaCorrente(numeroConta, saldo, cartao, 0, cartaoCredito);
             System.out.println("Sua conta corrente foi criada com sucesso!");
             return contaCorrente;
-        }
-        else if(decisao == 2){
+        } 
+        else if (decisao == 2) {
             System.out.println("Voce esta criando uma conta poupanca...");
             int numeroCartao = RandomNumberGenerator.gerarNumCartao();
             int csv = RandomNumberGenerator.gerarCsv();
             Cartao cartao = new Cartao(numeroCartao, csv);
             int numeroConta = RandomNumberGenerator.gerarNumConta();
             System.out.println("Digite o saldo que deseja colocar na sua conta:");
-            double saldo = sc.nextDouble();
+            double saldo = Double.parseDouble(sc.nextLine().trim());
             ContaPoupanca contaPoupanca = new ContaPoupanca(numeroConta, saldo, cartao, 0);
             System.out.println("Sua conta poupanca foi criada com sucesso!");
             return contaPoupanca;

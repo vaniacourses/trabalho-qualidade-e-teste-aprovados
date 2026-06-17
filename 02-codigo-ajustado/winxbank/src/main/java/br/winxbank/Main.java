@@ -52,7 +52,8 @@ public class Main {
                     switch (decisao){
                         // ----------------- MENU INICIAL ----------------- OBS: Antes e depois de haver usuario logado
                         case 1: // CADASTRAR USUARIO
-                            RegistroDeClientes.getInstancia().cadastrarCliente();
+                        	sc.nextLine();
+                            RegistroDeClientes.getInstancia().cadastrarCliente(sc);
                             RegistroDeClientes.getInstancia().printarListaDeClientes();
                             break;
                         case 2: // LOGAR

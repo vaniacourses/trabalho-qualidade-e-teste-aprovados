@@ -29,7 +29,7 @@
 |1.2|<br />Caio|Refatorar `BancoTest` para usar mocks nos singletons (`RegistroDeClientes`, `Ano`). Adicionar testes para `abrirNovaConta` tipo 1 e tipo 2 com input simulado|
 |1.3|Joao Omar|Ampliar `CartaoCreditoTest`: adicionar testes para `setFatura` com valor que zera fatura (faturaPaga=true), `cobrarJuros` quando indexMes e igual ao atual, `creditar` verificando atribuicao de mes|
 |1.4|Rafael|Criar testes unitarios para `ContaCorrente`: `pagarFatura`, `descontarTaxa` (verificar saldo e extrato), `comprar` opcao debito e credito, `getTipoDaConta`|
-|1.5|Joao Victor|Ampliar `AnoTest`: testar wrap-around do mes 11 para 0, overflow do contador, `setMesAtual` com mes valido e invalido, verificar chamada a `movimentarEntreBancoConta`|
+|1.5|Joao Victor|Ampliar `AnoTest` cobrindo cenários válidos e inválidos de `setMesAtual`, wrap-around Dezembro→Janeiro, overflow do contador, retorno de `fazerMesPassar`, ramos condicionais de count múltiplo e não múltiplo de 5 e integração com Banco.movimentarEntreBancoConta.|
 
 \---
 
@@ -43,7 +43,7 @@
 |2.2|Caio|Integracao `Banco.movimentarEntreBancoConta` + `ContaCorrente` + `ContaPoupanca`: verificar que taxa de manutencao e descontada da corrente, rendimento e acrescentado na poupanca, e receitas/despesas do banco sao atualizadas|
 |2.3|Joao Omar|Integracao `CartaoCredito` + `ContaCorrente` + `Banco`: creditar no cartao -> cobrar juros -> verificar que receita do banco aumenta corretamente|
 |2.4|Rafael|Integracao `ContaCorrente.pagarFatura` + `CartaoCredito`: pagar fatura e verificar que saldo da conta diminui e fatura do cartao diminui proporcionalmente|
-|2.5|Joao Victor|Integracao `Ano.fazerMesPassar` + `Banco.movimentarEntreBancoConta` + contas: verificar que a cada 5 interacoes os meses passam e as movimentacoes automaticas ocorrem|
+|2.5|Joao Victor|Validar a integração entre `Ano`, `Banco` e `ContaCorrente` garantindo que a passagem de mês execute corretamente as movimentações automáticas do sistema bancário.|
 
 \---
 
@@ -268,7 +268,7 @@ Plugins a adicionar para suportar a Entrega 2:
 
 ### Joao Victor Amaral
 
-* \[  ] Ampliar `AnoTest` (1.5)
+* \[X] Ampliar `AnoTest` (1.5)
 * \[  ] Teste de integracao: passagem de meses + movimentacoes (2.5)
 * \[  ] Teste de sistema: fluxo ClienteWinx (3.5)
 * \[  ] Teste E2E com Selenium (4.5)
