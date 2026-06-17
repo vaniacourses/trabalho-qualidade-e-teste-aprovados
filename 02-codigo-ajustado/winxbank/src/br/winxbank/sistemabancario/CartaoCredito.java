@@ -89,19 +89,19 @@ public class CartaoCredito extends Cartao implements OperacoesAutomaticas{
     }
 
     /**
-     * Método responsável por cobrar jurus de uma fatura conforme meses passados.
+     * Método responsável por cobrar juros de uma fatura conforme meses passados.
      */
-    public void cobrarJurus(){
+    public void cobrarJuros(){
         if (this.faturaPaga == false && Ano.getInstancia().getIndexMesAtual() > this.indexMesDaFatura){
             double faturaAnterior = this.fatura;
-            this.fatura *= taxaJurus;
+            this.fatura *= taxaJuros;
             movimentacaoBancaria(this.fatura - faturaAnterior);
         }
 
     }
 
     /**
-     * Método responsável por gerar receita ao banco do valor pago a mais da cobrança de jurus em cima de uma fatura.
+     * Método responsável por gerar receita ao banco do valor pago a mais da cobrança de juros em cima de uma fatura.
      * @param valor
      */
     public void movimentacaoBancaria(double valor) {

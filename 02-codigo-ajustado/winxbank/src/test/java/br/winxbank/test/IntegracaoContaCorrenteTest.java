@@ -20,7 +20,7 @@ import br.winxbank.tempo.Ano;
 /**
  * Testes de integracao para ContaCorrente:
  * - pagarFatura + CartaoCredito
- * - movimentarEntreBancoConta + descontarTaxa + cobrarJurus
+ * - movimentarEntreBancoConta + descontarTaxa + cobrarJuros
  */
 public class IntegracaoContaCorrenteTest {
 
@@ -112,8 +112,8 @@ public class IntegracaoContaCorrenteTest {
         Banco.getInstancia().movimentarEntreBancoConta();
 
         double saldoEsperado = SALDO_INICIAL - TAXA_MANUTENCAO;
-        double taxaJurus = 12.75;
-        double faturaEsperada = 200.0 * taxaJurus;
+        double taxaJuros = 12.75;
+        double faturaEsperada = 200.0 * taxaJuros;
         double receitaEsperada = TAXA_MANUTENCAO + (faturaEsperada - 200.0);
 
         System.out.println("Saldo esperado: " + saldoEsperado + " | Saldo final: " + conta.getSaldo());

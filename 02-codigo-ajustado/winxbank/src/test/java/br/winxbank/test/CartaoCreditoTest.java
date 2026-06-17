@@ -85,7 +85,7 @@ public class CartaoCreditoTest {
 
         CartaoCredito cartao = criarCartao(faturaInicial, 0, true, LIMITE_PADRAO);
 
-        cartao.cobrarJurus(1);
+        cartao.cobrarJuros(1);
 
         double faturaFinal = cartao.getFatura();
 
@@ -106,7 +106,7 @@ public class CartaoCreditoTest {
 
         doNothing().when(cartao).movimentacaoBancaria(anyDouble());
 
-        cartao.cobrarJurus(0);
+        cartao.cobrarJuros(0);
 
         double faturaFinal = cartao.getFatura();
 
@@ -171,7 +171,7 @@ public class CartaoCreditoTest {
 
         doNothing().when(cartao).movimentacaoBancaria(anyDouble());
 
-        cartao.cobrarJurus(1);
+        cartao.cobrarJuros(1);
 
         ArgumentCaptor<Double> captor = ArgumentCaptor.forClass(Double.class);
 

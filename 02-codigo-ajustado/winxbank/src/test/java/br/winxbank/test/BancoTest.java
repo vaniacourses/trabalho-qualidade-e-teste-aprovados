@@ -43,7 +43,7 @@ import br.winxbank.tempo.Ano;
  *  - abrirNovaConta tipo 1 e tipo 2 sao testados simulando a entrada do console.
  *
  * Constantes do dominio (interface OperacoesAutomaticas):
- *  taxaManutencaoConta = 13.00 | rendimentoMensalPoupanca = 0.8 | taxaJurus = 12.75
+ *  taxaManutencaoConta = 13.00 | rendimentoMensalPoupanca = 0.8 | taxaJuros = 12.75
  */
 class BancoTest {
 

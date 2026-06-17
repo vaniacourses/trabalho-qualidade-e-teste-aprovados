@@ -51,7 +51,7 @@ Cobre todos os métodos da classe com isolamento de dependências usando Mockito
 | `comprar` | Débito confirmado, débito cancelado, crédito confirmado, crédito cancelado, opção inválida, saldo exato, acima do limite, no limite exato |
 | `getTipoDaConta` | Retorna "Corrente" |
 | `getCartaoCredito` | Retorna o cartão de crédito associado |
-| `cobrarJurusEmprestimo` | Cálculo de juros sobre empréstimo |
+| `cobrarJurosEmprestimo` | Cálculo de juros sobre empréstimo |
 | `requisitarEmprestimo` | Empréstimo com verificação de saldo |
 | `pagarParcelaDeEmprestimo` | Pagamento com verificação de dívida |
 | `depositar` | Aumento de saldo e extrato |
