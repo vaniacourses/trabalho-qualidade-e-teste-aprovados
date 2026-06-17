@@ -12,7 +12,7 @@
 |1|Fernando Rene|fernandorcafilho|
 |2|Joao Omar|joaomar1|
 |3|Caio Marcio / Caio Silva|cakocaito|
-|4|Rafael (Disklo)|Disklo|
+|4|Rafael Lucio|Disklo|
 |5|Joao Victor Amaral|JvamleiteUff|
 
 \---
@@ -27,7 +27,7 @@
 |-|-|-|
 |1.1|Fernando Rene|Criar testes unitarios para `RegistroDeClientes`: mockando `Banco.getInstancia()` e isolando chamadas de Scanner. Testar `cadastrarCliente`, `checarCpf`, `retornarCliente`, `atualizarCliente`, `removerCliente`|
 |1.2|<br />Caio|Refatorar `BancoTest` para usar mocks nos singletons (`RegistroDeClientes`, `Ano`). Adicionar testes para `abrirNovaConta` tipo 1 e tipo 2 com input simulado|
-|1.3|Joao Omar|Ampliar `CartaoCreditoTest`: adicionar testes para `setFatura` com valor que zera fatura (faturaPaga=true), `cobrarJurus` quando indexMes e igual ao atual, `creditar` verificando atribuicao de mes|
+|1.3|Joao Omar|Ampliar `CartaoCreditoTest`: adicionar testes para `setFatura` com valor que zera fatura (faturaPaga=true), `cobrarJuros` quando indexMes e igual ao atual, `creditar` verificando atribuicao de mes|
 |1.4|Rafael|Criar testes unitarios para `ContaCorrente`: `pagarFatura`, `descontarTaxa` (verificar saldo e extrato), `comprar` opcao debito e credito, `getTipoDaConta`|
 |1.5|Joao Victor|Ampliar `AnoTest` cobrindo cenários válidos e inválidos de `setMesAtual`, wrap-around Dezembro→Janeiro, overflow do contador, retorno de `fazerMesPassar`, ramos condicionais de count múltiplo e não múltiplo de 5 e integração com Banco.movimentarEntreBancoConta.|
 
@@ -139,7 +139,7 @@
 |-|-|-|-|
 |5.2.1|Fernando Rene|`RegistroDeClientes`|Cobrir todos os branches de `cadastrarCliente`, `checarCpf`, `retornarCliente`, `visualizarDetalhesDoCliente`|
 |5.2.2|Caio|`Banco`|Cobrir branches de `movimentarEntreBancoConta` (ContaPoupanca vs ContaCorrente, fatura > 0), `setReceitas`/`setDespesas` (positivo/negativo), `printarBanco`|
-|5.2.3|Joao Omar|`CartaoCredito`|Cobrir branches de `setFatura` (dentro/acima limite, fatura <= 0), `cobrarJurus` (faturaPaga + indexMes), `creditar`|
+|5.2.3|Joao Omar|`CartaoCredito`|Cobrir branches de `setFatura` (dentro/acima limite, fatura <= 0), `cobrarJuros` (faturaPaga + indexMes), `creditar`|
 |5.2.4|Rafael|`ContaCorrente`|Cobrir branches de `comprar` (debito decisao1=1/outro, credito decisao1=2/outro, decisao2=1/outro)|
 |5.2.5|Joao Victor|`Ano`|Cobrir branches de `fazerMesPassar` (count%5==0, indexMes==11, count==MAX\_VALUE), `setMesAtual` (mes encontrado/nao encontrado)|
 
@@ -253,7 +253,7 @@ Plugins a adicionar para suportar a Entrega 2:
 * \[  ]
 * \[  ]
 
-### Rafael (Disklo)
+### Rafael Lucio
 
 * \[  ] Testes unitarios de `ContaCorrente` (1.4)
 * \[  ] Teste de integracao: pagarFatura + cartao (2.4)
@@ -277,4 +277,3 @@ Plugins a adicionar para suportar a Entrega 2:
 * \[  ] Teste mutacao >=80%: `Ano` (8.5)
 * \[  ] ISO 25010: Manutenibilidade + Portabilidade (9)
 * \[  ] Correcao SonarQube: `Ano` (10)
-

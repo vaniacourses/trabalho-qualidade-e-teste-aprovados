@@ -43,7 +43,7 @@ public class IntegracaoCartaoCreditoTest {
 
         Ano.getInstancia().setMesAtual("Fevereiro");
 
-        cartao.cobrarJurus();
+        cartao.cobrarJuros();
 
         double faturaFinal = cartao.getFatura();
         double receitaFinalBanco = Banco.getInstancia().getReceitas();
@@ -88,7 +88,7 @@ public class IntegracaoCartaoCreditoTest {
 
         Ano.getInstancia().setMesAtual("Fevereiro");
 
-        cartao.cobrarJurus();
+        cartao.cobrarJuros();
 
         double faturaFinal = cartao.getFatura();
         double receitaFinalBanco = Banco.getInstancia().getReceitas();

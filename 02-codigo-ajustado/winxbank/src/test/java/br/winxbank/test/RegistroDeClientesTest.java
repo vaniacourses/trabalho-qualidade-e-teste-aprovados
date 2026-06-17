@@ -200,7 +200,7 @@ public class RegistroDeClientesTest {
 
             assertEquals(1, registro.getClientes().size(),
                     "Nao deve adicionar cliente com CPF duplicado");
-            verify(banco, never()).abrirNovaConta();
+            verify(banco, never()).abrirNovaConta(any(java.util.Scanner.class));
         }
 
         System.setOut(originalOut);

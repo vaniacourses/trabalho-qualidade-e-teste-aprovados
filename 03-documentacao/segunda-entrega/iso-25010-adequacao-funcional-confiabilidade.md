@@ -13,7 +13,7 @@ A adequacao funcional avalia o grau em que o produto de software fornece funcoes
 | Subcaracteristica | Medida | Escala (1-5) | Valor | Justificativa |
 |-|-|-|-|-|
 | **Completude Funcional** | Proporcao de funcoes implementadas em relacao as especificadas | 1 = Menos de 20% das funcoes implementadas; 5 = 100% das funcoes implementadas | **4** | O sistema implementa as funcionalidades bancarias essenciais: cadastro de clientes, abertura de contas (corrente e poupanca), deposito, saque, PIX, compras (debito/credito), fatura de cartao de credito, emprestimos, passagem de meses com movimentacoes automaticas (taxa de manutencao, rendimento poupanca, juros de fatura) e sistema de pontos ClienteWinx. Funcionalidades como transferencia entre contas proprias e relatorios detalhados nao estao implementadas. |
-| **Correcao Funcional** | Proporcao de resultados corretos em relacao ao total de operacoes executadas | 1 = Menos de 50% de resultados corretos; 5 = 100% dos resultados corretos | **3** | A maioria das operacoes retorna resultados corretos (deposito, saque, PIX, taxa de manutencao). Porem, existem problemas: o metodo `retornarCliente` possui logica de verificacao de nulo incorreta (checa `clientes.get(0)` dentro do loop foreach); o metodo `printarBanco` altera despesas como efeito colateral; `atualizarCliente` e `removerCliente` podem pular elementos ao iterar e modificar a lista simultaneamente. O calculo de rendimento da poupanca (`saldo / 0.8`) produz valores acima do esperado. |
+| **Correcao Funcional** | Proporcao de resultados corretos em relacao ao total de operacoes executadas | 1 = Menos de 50% de resultados corretos; 5 = 100% dos resultados corretos | **4** | A maioria das operacoes retorna resultados corretos (deposito, saque, PIX, taxa de manutencao). Na revisao da segunda entrega, foram corrigidos problemas em `RegistroDeClientes`: `retornarCliente` passou a retornar `null` corretamente quando o CPF nao existe, e `atualizarCliente`/`removerCliente` passaram a interromper a iteracao apos alterar a lista. Ainda existem riscos em outros pontos, como `printarBanco` alterar despesas como efeito colateral e o calculo de rendimento da poupanca (`saldo / 0.8`) produzir valores acima do esperado. |
 | **Adequacao Funcional** | Grau em que as funcoes facilitam a realizacao de tarefas e objetivos do usuario | 1 = Funcoes dificultam o uso; 5 = Funcoes facilitam plenamente o uso | **4** | O sistema oferece uma interface grafica Swing (GUI) com paineis dedicados para login e dashboard, alem da interface de console original. O WinxBankController encapsula toda a logica de negocio de forma acessivel pela GUI, com feedback ao usuario via ActionResult. A persistencia automatica em JSON garante que os dados nao se percam entre sessoes. |
 
 ---
@@ -35,13 +35,13 @@ A confiabilidade avalia o grau em que um sistema executa funcoes especificadas s
 
 | Caracteristica | Media |
 |-|-|
-| Adequacao Funcional | 3.67 |
+| Adequacao Funcional | 4.00 |
 | Confiabilidade | 3.00 |
-| **Media Geral** | **3.33** |
+| **Media Geral** | **3.50** |
 
 ### Principais Pontos de Melhoria
 
-1. **Correcao funcional**: Corrigir bugs em `retornarCliente`, `atualizarCliente`, `removerCliente` e `printarBanco`.
+1. **Correcao funcional**: Corrigir o efeito colateral de `printarBanco` e revisar o calculo de rendimento da poupanca.
 2. **Tolerancia a falhas**: Adicionar validacao de entrada no dominio (nao apenas no controller), tratar excecoes de Scanner, e verificar retornos nulos de `abrirNovaConta`.
 3. **Recuperabilidade**: Implementar gravacao atomica (escrever em arquivo temporario e renomear) e adicionar backup antes de sobrescrever.
 4. **Maturidade**: Aumentar cobertura de testes para identificar e corrigir defeitos latentes.

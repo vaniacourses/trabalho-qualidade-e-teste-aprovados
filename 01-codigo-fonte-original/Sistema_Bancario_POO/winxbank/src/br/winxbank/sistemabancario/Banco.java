@@ -75,20 +75,20 @@ public class Banco implements Serializable {
 
     /**
      * Método responsável por realizar as movimentações entre banco e conta.
-     * Tais quais: acrescentar rendimento em uma poupança e cobrar jurus da fatura do cartao de credito e descontar taxa de uma conta corrente.
+     * Tais quais: acrescentar rendimento em uma poupança e cobrar juros da fatura do cartao de credito e descontar taxa de uma conta corrente.
      */
     public void movimentarEntreBancoConta(){
         if(!(RegistroDeClientes.getInstancia().getClientes().isEmpty())){
             for(Cliente cliente : RegistroDeClientes.getInstancia().getClientes()){
                 for(Conta conta : cliente.getContas()){
-                    conta.cobrarJurusEmprestimo();
+                    conta.cobrarJurosEmprestimo();
                     if(conta.getClass() == ContaPoupanca.class){
                         ((ContaPoupanca) conta).acrescentarRendimento();
                     }
                     else if(conta.getClass() == ContaCorrente.class){
                         ((ContaCorrente) conta).descontarTaxa();
                         if(((ContaCorrente) conta).getCartaoCredito().getFatura() > 0){
-                            ((ContaCorrente) conta).getCartaoCredito().cobrarJurus();
+                            ((ContaCorrente) conta).getCartaoCredito().cobrarJuros();
                         }
                     }
                 }

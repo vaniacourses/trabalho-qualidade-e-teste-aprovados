@@ -142,8 +142,8 @@ public class CartaoCredito extends Cartao implements OperacoesAutomaticas {
      * Método responsável por cobrar juros de uma fatura conforme meses passados.
      * Mantém o comportamento original, usando o mês atual do Singleton Ano.
      */
-    public void cobrarJurus() {
-        cobrarJurus(Ano.getInstancia().getIndexMesAtual());
+    public void cobrarJuros() {
+        cobrarJuros(Ano.getInstancia().getIndexMesAtual());
     }
 
     /**
@@ -153,10 +153,10 @@ public class CartaoCredito extends Cartao implements OperacoesAutomaticas {
      * 
      * @param indexMesAtual índice do mês atual
      */
-    public void cobrarJurus(int indexMesAtual) {
+    public void cobrarJuros(int indexMesAtual) {
         if (!this.faturaPaga && indexMesAtual > this.indexMesDaFatura) {
             double faturaAnterior = this.fatura;
-            this.fatura *= taxaJurus;
+            this.fatura *= taxaJuros;
             movimentacaoBancaria(this.fatura - faturaAnterior);
         }
     }

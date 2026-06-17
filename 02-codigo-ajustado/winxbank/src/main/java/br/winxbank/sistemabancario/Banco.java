@@ -29,7 +29,16 @@ public class Banco implements Serializable {
     /**
      * Método responsável por abrir uma nova conta.
      */
+    public Conta abrirNovaConta() {
+        return abrirNovaConta(new Scanner(System.in));
+    }
+
+    /**
+     * Abre uma nova conta usando o scanner informado. Isso evita múltiplos
+     * scanners concorrendo pelo mesmo System.in durante fluxos de cadastro.
+     */
     public Conta abrirNovaConta(Scanner sc) {
+        int decisao = 0;
         System.out.println("Qual tipo de conta conta deseja abrir? Digite 1 (Corrente) ou 2 (Poupanca)");
         int decisao = Integer.parseInt(sc.nextLine().trim());
         if (decisao == 1) {
@@ -78,7 +87,7 @@ public class Banco implements Serializable {
 
     /**
      * Método responsável por realizar as movimentações entre banco e conta.
-     * Tais quais: acrescentar rendimento em uma poupança e cobrar jurus da fatura do cartao de credito e descontar taxa de uma conta corrente.
+     * Tais quais: acrescentar rendimento em uma poupança e cobrar juros da fatura do cartao de credito e descontar taxa de uma conta corrente.
      */
     public void movimentarEntreBancoConta(){
         for(Cliente cliente : RegistroDeClientes.getInstancia().getClientes()){
@@ -95,7 +104,7 @@ public class Banco implements Serializable {
      * @param conta conta a ser processada
      */
     private void processarMovimentacaoDaConta(Conta conta){
-        conta.cobrarJurusEmprestimo();
+        conta.cobrarJurosEmprestimo();
         if(conta.getClass() == ContaPoupanca.class){
             ((ContaPoupanca) conta).acrescentarRendimento();
         }
@@ -103,7 +112,7 @@ public class Banco implements Serializable {
             ContaCorrente contaCorrente = (ContaCorrente) conta;
             contaCorrente.descontarTaxa();
             if(contaCorrente.getCartaoCredito().getFatura() > 0){
-                contaCorrente.getCartaoCredito().cobrarJurus();
+                contaCorrente.getCartaoCredito().cobrarJuros();
             }
         }
     }
