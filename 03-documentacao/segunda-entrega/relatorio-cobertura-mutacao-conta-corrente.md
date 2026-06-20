@@ -12,7 +12,7 @@
 |---------|---------------------|----------------------|----------|
 | Cobertura de instruções (JaCoCo) | 25% | **100%** | +75pp |
 | Cobertura de branches (JaCoCo) | 0% | **100%** | +100pp |
-| Mutation score (PITest) | 0% | **100%** | +100pp |
+| Mutation score (PITest) | 0% | **100%** (26/26) | +100pp |
 | Nº de mutantes gerados | 28 | 26 | - |
 | Mutantes mortos (KILLED) | 0 | 26 | +26 |
 | Mutantes sem cobertura (NO_COVERAGE) | 28 | 0 | -28 |
@@ -38,11 +38,61 @@ As mudanças no código-fonte tornaram a classe mais testável e eliminaram dupl
 
 **Por que 26 mutantes (ANTES: 28) e não menos?** A versão antiga tinha 28 mutantes porque o código duplicado gerava mutantes redundantes (ex: 2× `if(decisao2==1)` geravam 2 mutações separadas). Com a extração do método `exibirCartaoEConfirmar`, esses mutantes foram unificados (1× `return decisao2 == CONFIRMAR`), reduzindo o total para 26. Os 2 mutantes a menos são exatamente as duplicações eliminadas.
 
+### 2.1.1. Complexidade Ciclomática (V(G))
+
+A complexidade ciclomática foi calculada por método usando a fórmula **V(G) = predicados + 1**. O limite de McCabe recomendado é V(G) ≤ 15 por método.
+
+#### ANTES (código original — 103 linhas, 7 métodos)
+
+| Método | Predicados | V(G) |
+|--------|:---------:|:----:|
+| `ContaCorrente` (construtor) | 0 | 1 |
+| `pagarFatura` | 0 | 1 |
+| `descontarTaxa` | 0 | 1 |
+| `movimentacaoBancaria` | 0 | 1 |
+| `getCartaoCredito` | 0 | 1 |
+| `getTipoDaConta` | 0 | 1 |
+| `comprar` | `if(decisao==1)`, `if(decisao2==1)`, `else if(decisao==2)`, `if(decisao2==1)` | **5** |
+| **Total da classe** | | **11** |
+
+O método `comprar()` concentrava toda a complexidade com código duplicado (dois blocos idênticos de exibição de cartão e confirmação, um para débito e outro para crédito, ~14 linhas cada).
+
+#### DEPOIS (código refatorado — 112 linhas, 8 métodos)
+
+| Método | Predicados | V(G) |
+|--------|:---------:|:----:|
+| `ContaCorrente` (construtor) | 0 | 1 |
+| `pagarFatura` | 0 | 1 |
+| `descontarTaxa` | 0 | 1 |
+| `movimentacaoBancaria` | 0 | 1 |
+| `getCartaoCredito` | 0 | 1 |
+| `getTipoDaConta` | 0 | 1 |
+| `exibirCartaoEConfirmar` (novo) | `return decisao2 == CONFIRMAR` | **2** |
+| `comprar` | `if(decisao==OPCAO_DEBITO)`, `if(exibirCartaoEConfirmar)`, `else if(decisao==OPCAO_CREDITO)`, `if(exibirCartaoEConfirmar)` | **5** |
+| **Total da classe** | | **13** |
+
+#### Análise
+
+| Indicador | ANTES | DEPOIS | Variação |
+|-----------|:-----:|:------:|:--------:|
+| V(G) total da classe | 11 | 13 | +2 |
+| Métodos | 7 | 8 | +1 |
+| V(G) máximo por método | 5 | 5 | — |
+| Código duplicado | ~14 linhas duplicadas | 0 | eliminado |
+| Meta McCabe (≤15/método) | Atingida | Atingida | — |
+
+O aumento de 11 → 13 é explicado pela extração do método `exibirCartaoEConfirmar` (V(G)=2). Embora a complexidade total tenha subido, a refatoração trouxe benefícios concretos:
+
+- **Eliminou ~14 linhas de código duplicado** (os blocos de exibição/confirmação de cartão estavam repetidos nos fluxos de débito e crédito)
+- **Cada método individual permanece abaixo do limite de McCabe** (V(G) máximo = 5, muito abaixo de 15)
+- **Facilitou a testabilidade**: a confirmação do cartão passou a ser testada uma única vez, em vez de duas vezes com inputs diferentes
+- **Reduziu mutantes**: de 28 para 26, pois as duas branches duplicadas geravam mutações redundantes no PITest
+
 ### 2.2. Testes Unitários (`ContaCorrenteTest.java` - 30 testes)
 
 Arquivo: `src/test/java/br/winxbank/test/ContaCorrenteTest.java` (568 linhas)
 
-Cobre todos os métodos da classe com isolamento de dependências usando Mockito:
+Cobre todos os métodos da classe com isolamento de dependências usando `System.setIn`/`System.setOut` para substituir o Scanner e capturar a saída do console:
 
 | Método testado | Cenários cobertos |
 |----------------|-------------------|
@@ -68,9 +118,11 @@ Aplica técnicas de **partição de equivalência** e **análise de valor limite
 |---------|----------|
 | Partição: débito | Confirmado (decisao=1, confirmar=1), Cancelado (decisao=1, confirmar=2) |
 | Partição: crédito | Confirmado (decisao=2, confirmar=1), Cancelado (decisao=2, confirmar=2) |
-| Partição: opção inválida | decisa=0, decisa=3, decisa=-1 (nenhuma ação) |
+| Partição: opção inválida | decisa=0, decisa=5, decisa=-1 (nenhuma ação) |
 | Valor limite: débito | Saldo exato (saldo = valor), valor zero |
 | Valor limite: crédito | No limite exato (1000.0), acima do limite (1000.01) |
+
+**Avaliação da técnica:** A **partição de equivalência** mostrou-se adequada para `comprar()` porque as entradas do método se agrupam naturalmente em três classes mutuamente exclusivas (débito, crédito, opção inválida), cada uma com comportamento distinto — débito reduz saldo, crédito aumenta fatura, e opção inválida não afeta nenhum dos dois. Testar um representante de cada partição (confirmado e cancelado) garante cobertura de todos os fluxos sem redundância. Já a **análise de valor limite** foi essencial para o fluxo de crédito porque o `CartaoCredito` impõe um limite rígido de R$ 1000,00: o valor exato (1000.0) deve ser aceito e o valor imediatamente acima (1000.01) deve ser rejeitado — um erro de off-by-one nessa fronteira passaria despercebido em testes puramente particionais. Da mesma forma, o débito com saldo exato verifica a fronteira inferior (saldo = valor → saldo final = 0). As duas técnicas combinadas produziram 11 cenários que cobrem todas as classes de equivalência e fronteiras críticas do método.
 
 ### 2.4. Testes de Integração (`IntegracaoContaCorrenteTest.java` - 6 testes)
 
@@ -87,15 +139,16 @@ Testa a interação real entre `ContaCorrente`, `CartaoCredito`, `Banco` e `Cont
 | `movimentarEntreBancoConta` com contas mistas (corrente + poupança) |
 | Verificação de extrato pós-movimentação automática |
 
-### 2.5. Testes de Segurança (`SegurancaTest.java` - 10 testes)
+### 2.5. Teste Não Funcional de Segurança (`SegurancaTest.java` - 10 testes)
 
 Arquivo: `src/test/java/br/winxbank/test/SegurancaTest.java` (207 linhas)
 
-Verifica proteções de segurança relacionadas à `ContaCorrente`:
+Teste de requisito **não funcional** — diferente dos testes funcionais que validam se uma feature funciona, este verifica se o sistema resiste a entradas inválidas e abusos. Valida proteções de segurança relacionadas à `ContaCorrente`:
 
 | Verificação |
 |-------------|
 | `setSaldo` com valor negativo não corrompe saldo |
+| `setSaldo` com valor negativo grande (saldo pode ficar negativo) |
 | `depositar` com valor negativo não altera saldo |
 | `sacar` com valor negativo não altera saldo |
 | `comprar` com valor negativo não processa |
@@ -104,6 +157,32 @@ Verifica proteções de segurança relacionadas à `ContaCorrente`:
 | CPF duplicado é rejeitado no cadastro |
 | `Banco.setReceitas` ignora valores negativos |
 | `Banco.setDespesas` ignora valores negativos |
+
+### 2.6. Testes de Sistema (Fluxo PIX — `SistemaPixTest.java` — 4 cenários)
+
+Arquivo: `src/test/java/br/winxbank/test/SistemaPixTest.java` (207 linhas)
+
+Valida o fluxo completo de PIX entre dois clientes simulando o caminho real do usuário (sem mocks, usando objetos reais de `Cliente`, `ContaCorrente`, `RegistroDeClientes`):
+
+| Cenário |
+|---------|
+| Fluxo completo: cadastrar cliente A → abrir conta → cadastrar B → abrir conta → PIX de A para B → verificar saldos de ambos |
+| PIX com conta inexistente retorna null |
+| PIX múltiplo entre contas do mesmo cliente |
+| PIX com valor zero (não altera saldos) |
+
+### 2.7. Testes E2E (PIX via ProcessBuilder — `E2EPixTest.java` — 2 cenários)
+
+Arquivo: `src/test/java/br/winxbank/test/E2EPixTest.java` (117 linhas)
+
+Utiliza `ProcessBuilder` para executar o JAR compilado (`java -jar target/winxbank-1.0.jar`) e simular a interação do usuário via console (stdin/stdout), validando o fluxo PIX de ponta a ponta:
+
+| Cenário |
+|---------|
+| Fluxo E2E completo via ProcessBuilder: cadastrar A e B → logar → abrir contas → fazer PIX → verificar saída do console e exit code |
+| Verificação de preparação dos inputs (validação estática da string de entrada) |
+
+> **Nota:** Os testes E2E são condicionados à existência do JAR compilado (`@EnabledIf("jarExiste")`) e não contribuem diretamente para as métricas de cobertura/mutação, que são o foco principal deste relatório.
 
 ---
 
@@ -159,7 +238,7 @@ Nenhum mutante foi morto porque não havia testes que exercitassem `ContaCorrent
 Mutantes gerados: 26
 KILLED: 26
 SURVIVED: 0
-Mutation Score: 100%
+Mutation Score: 100% (26/26)
 ```
 
 Os 26 mutantes mortos incluem:
@@ -178,10 +257,10 @@ Para matar os 3 mutantes relacionados a `System.out.println` no método `exibirC
 
 ## 5. Conclusão
 
-A classe `ContaCorrente` passou de **25% de cobertura de instruções / 0% de branches / 0% mutation score** para **100% de cobertura / 100% de branches / 100% mutation score**, atingindo e superando as metas estabelecidas no plano de entrega:
+A classe `ContaCorrente` passou de **25% de cobertura de instruções / 0% de branches / 0% mutation score** para **100% de cobertura / 100% de branches / 100% mutation score (26/26 mutantes mortos)**, atingindo as metas estabelecidas no plano de entrega:
 
 - [x] Cobertura de branch ≥ 80% (Task 5.2.4): **100%** 
 - [x] Mutation score ≥ 80% (Task 5.4.4): **100%** 
 - [x] Teste funcional caixa-preta com partição e valor limite (Task 5.1.4)
-- [x] Testes unitários com mocks isolando dependências (Task 1.4)
+- [x] Testes unitários com isolamento de dependências via System.setIn/setOut (Task 1.4)
 - [x] Testes de integração com componentes reais (Task 2.4)

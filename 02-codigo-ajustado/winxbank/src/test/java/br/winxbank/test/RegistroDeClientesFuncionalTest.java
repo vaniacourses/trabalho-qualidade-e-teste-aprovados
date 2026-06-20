@@ -77,11 +77,7 @@ public class RegistroDeClientesFuncionalTest {
         try (MockedStatic<Banco> bancoMock = Mockito.mockStatic(Banco.class)) {
             Banco banco = mock(Banco.class);
             bancoMock.when(Banco::getInstancia).thenReturn(banco);
-<<<<<<< HEAD
             when(banco.abrirNovaConta(any(Scanner.class))).thenReturn(conta);
-=======
-            when(banco.abrirNovaConta(any(java.util.Scanner.class))).thenReturn(conta);
->>>>>>> 709b1befd055c610be40fe7725ddad2930c0c5e7
 
             System.setIn(new ByteArrayInputStream("Maria\n123.456.789-00\n".getBytes()));
             registro.cadastrarCliente();
@@ -127,11 +123,7 @@ public class RegistroDeClientesFuncionalTest {
         try (MockedStatic<Banco> bancoMock = Mockito.mockStatic(Banco.class)) {
             Banco banco = mock(Banco.class);
             bancoMock.when(Banco::getInstancia).thenReturn(banco);
-<<<<<<< HEAD
             when(banco.abrirNovaConta(any(Scanner.class))).thenReturn(conta);
-=======
-            when(banco.abrirNovaConta(any(java.util.Scanner.class))).thenReturn(conta);
->>>>>>> 709b1befd055c610be40fe7725ddad2930c0c5e7
 
             System.setIn(new ByteArrayInputStream("Sem CPF\n\n".getBytes()));
             registro.cadastrarCliente();
@@ -153,11 +145,7 @@ public class RegistroDeClientesFuncionalTest {
         try (MockedStatic<Banco> bancoMock = Mockito.mockStatic(Banco.class)) {
             Banco banco = mock(Banco.class);
             bancoMock.when(Banco::getInstancia).thenReturn(banco);
-<<<<<<< HEAD
             when(banco.abrirNovaConta(any(Scanner.class))).thenReturn(conta1,conta2);
-=======
-            when(banco.abrirNovaConta(any(java.util.Scanner.class))).thenReturn(conta1, conta2);
->>>>>>> 709b1befd055c610be40fe7725ddad2930c0c5e7
 
             System.setIn(new ByteArrayInputStream("Alice\n111.111.111-11\n".getBytes()));
             registro.cadastrarCliente();
@@ -181,11 +169,7 @@ public class RegistroDeClientesFuncionalTest {
         try (MockedStatic<Banco> bancoMock = Mockito.mockStatic(Banco.class)) {
             Banco banco = mock(Banco.class);
             bancoMock.when(Banco::getInstancia).thenReturn(banco);
-<<<<<<< HEAD
             when(banco.abrirNovaConta(any(Scanner.class))).thenReturn(conta);
-=======
-            when(banco.abrirNovaConta(any(java.util.Scanner.class))).thenReturn(conta);
->>>>>>> 709b1befd055c610be40fe7725ddad2930c0c5e7
 
             System.setIn(new ByteArrayInputStream("Quase Winx\n111.111.111-11\n".getBytes()));
             registro.cadastrarCliente();
@@ -207,11 +191,7 @@ public class RegistroDeClientesFuncionalTest {
         try (MockedStatic<Banco> bancoMock = Mockito.mockStatic(Banco.class)) {
             Banco banco = mock(Banco.class);
             bancoMock.when(Banco::getInstancia).thenReturn(banco);
-<<<<<<< HEAD
             when(banco.abrirNovaConta(any(Scanner.class))).thenReturn(conta);
-=======
-            when(banco.abrirNovaConta(any(java.util.Scanner.class))).thenReturn(conta);
->>>>>>> 709b1befd055c610be40fe7725ddad2930c0c5e7
 
             System.setIn(new ByteArrayInputStream("Exato Winx\n222.222.222-22\n".getBytes()));
             registro.cadastrarCliente();
@@ -232,11 +212,7 @@ public class RegistroDeClientesFuncionalTest {
         try (MockedStatic<Banco> bancoMock = Mockito.mockStatic(Banco.class)) {
             Banco banco = mock(Banco.class);
             bancoMock.when(Banco::getInstancia).thenReturn(banco);
-<<<<<<< HEAD
             when(banco.abrirNovaConta(any(Scanner.class))).thenReturn(conta);
-=======
-            when(banco.abrirNovaConta(any(java.util.Scanner.class))).thenReturn(conta);
->>>>>>> 709b1befd055c610be40fe7725ddad2930c0c5e7
 
             System.setIn(new ByteArrayInputStream("Super Winx\n333.333.333-33\n".getBytes()));
             registro.cadastrarCliente();
@@ -257,11 +233,7 @@ public class RegistroDeClientesFuncionalTest {
         try (MockedStatic<Banco> bancoMock = Mockito.mockStatic(Banco.class)) {
             Banco banco = mock(Banco.class);
             bancoMock.when(Banco::getInstancia).thenReturn(banco);
-<<<<<<< HEAD
             when(banco.abrirNovaConta(any(Scanner.class))).thenReturn(conta);
-=======
-            when(banco.abrirNovaConta(any(java.util.Scanner.class))).thenReturn(conta);
->>>>>>> 709b1befd055c610be40fe7725ddad2930c0c5e7
 
             System.setIn(new ByteArrayInputStream("Zero\n444.444.444-44\n".getBytes()));
             registro.cadastrarCliente();
@@ -280,11 +252,7 @@ public class RegistroDeClientesFuncionalTest {
         try (MockedStatic<Banco> bancoMock = Mockito.mockStatic(Banco.class)) {
             Banco banco = mock(Banco.class);
             bancoMock.when(Banco::getInstancia).thenReturn(banco);
-<<<<<<< HEAD
             when(banco.abrirNovaConta(any(Scanner.class))).thenReturn(conta);
-=======
-            when(banco.abrirNovaConta(any(java.util.Scanner.class))).thenReturn(conta);
->>>>>>> 709b1befd055c610be40fe7725ddad2930c0c5e7
 
             System.setIn(new ByteArrayInputStream("Milionario\n555.555.555-55\n".getBytes()));
             registro.cadastrarCliente();

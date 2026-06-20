@@ -27,18 +27,10 @@ public class Banco implements Serializable {
     }
 
     /**
-     * Método responsável por abrir uma nova conta.
-     */
-    public Conta abrirNovaConta() {
-        return abrirNovaConta(new Scanner(System.in));
-    }
-
-    /**
      * Abre uma nova conta usando o scanner informado. Isso evita múltiplos
      * scanners concorrendo pelo mesmo System.in durante fluxos de cadastro.
      */
     public Conta abrirNovaConta(Scanner sc) {
-        int decisao = 0;
         System.out.println("Qual tipo de conta conta deseja abrir? Digite 1 (Corrente) ou 2 (Poupanca)");
         int decisao = Integer.parseInt(sc.nextLine().trim());
         if (decisao == 1) {
