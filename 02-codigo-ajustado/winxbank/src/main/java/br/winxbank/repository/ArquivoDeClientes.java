@@ -8,6 +8,7 @@ import br.winxbank.sistemaclientes.RegistroDeClientes;
 
 import java.io.*;
 import java.util.ArrayList;
+import java.util.List;
 import com.google.gson.*;
 import kong.unirest.json.JSONArray;
 import kong.unirest.json.JSONException;
@@ -115,7 +116,7 @@ public class ArquivoDeClientes {
      * @param clientes
      * @throws IOException
      */
-    public void escreverJson(ArrayList<Cliente> clientes) throws IOException {
+    public void escreverJson(List<Cliente> clientes) throws IOException {
         try (Writer writer = new FileWriter("clientes.json")) {
             JSONArray jsonArray = new JSONArray();
             for(Cliente cliente : clientes){

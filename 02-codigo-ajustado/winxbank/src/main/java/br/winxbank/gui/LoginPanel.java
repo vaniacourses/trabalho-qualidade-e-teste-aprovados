@@ -14,7 +14,7 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.text.DecimalFormat;
-import java.util.ArrayList;
+import java.util.List;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 
@@ -153,7 +153,7 @@ public class LoginPanel extends JPanel {
     /** Recarrega a tabela de clientes e os números do banco a partir do modelo. */
     public void atualizar() {
         modelo.setRowCount(0);
-        ArrayList<Cliente> clientes = app.controller().getClientes();
+        List<Cliente> clientes = app.controller().getClientes();
         for (Cliente c : clientes) {
             boolean winx = c.getClass() == ClienteWinx.class;
             modelo.addRow(new Object[]{

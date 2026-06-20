@@ -3,6 +3,7 @@ package br.winxbank.sistemaclientes;
 import br.winxbank.sistemabancario.*;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 
 import java.text.DecimalFormat;
@@ -13,8 +14,14 @@ import java.text.DecimalFormat;
  */
 public class RegistroDeClientes {
 
+    private static final double SALDO_MINIMO_CLIENTE_WINX = 100000;
+    private static final String NOME_LABEL = "Nome: ";
+    private static final String CONTAS_LABEL = "\nContas:";
+    private static final String CSV_LABEL = "| csv: ";
+    private static final DecimalFormat FORMATO_MOEDA = new DecimalFormat("0.00");
+
     private static RegistroDeClientes instancia;
-    private ArrayList<Cliente> clientes = new ArrayList<Cliente>();
+    private final List<Cliente> clientes = new ArrayList<>();
 
     /**
      * Este método é responsável por cadastrar um cliente no registro de clientes.
@@ -22,9 +29,9 @@ public class RegistroDeClientes {
      */
     public void cadastrarCliente(){
         Scanner sc = new Scanner(System.in);
-        System.out.println("Você está cadastrando um cliente\nDigite o nome:");
+        imprimir("Você está cadastrando um cliente\nDigite o nome:");
         String nome = sc.nextLine();
-        System.out.println("Digite o cpf:");
+        imprimir("Digite o cpf:");
         String cpf = sc.nextLine();
         boolean cpfDisponivel = checarCpf(cpf);
         if(cpfDisponivel){
@@ -33,11 +40,11 @@ public class RegistroDeClientes {
             cliente.setContas(conta);
             Movimentacao movimentacao = new Movimentacao(conta.getSaldo(), Movimentacao.TipoDaMovimentacao.ENTRADA);
             conta.setExtrato(movimentacao);
-            if(conta instanceof ContaPoupanca){
-                ((ContaPoupanca) conta).setInformeRendimento(movimentacao);
+            if(conta instanceof ContaPoupanca contaPoupanca){
+                contaPoupanca.setInformeRendimento(movimentacao);
             }
-            if(conta.getSaldo() >= 100000){
-                System.out.println("Parabéns, você tem direito a ser ClienteWinx!");
+            if(conta.getSaldo() >= SALDO_MINIMO_CLIENTE_WINX){
+                imprimir("Parabéns, você tem direito a ser ClienteWinx!");
                 ClienteWinx clienteWinx = new ClienteWinx(nome, cpf, 0);
                 clienteWinx.setContas(conta);
                 clientes.add(clienteWinx);
@@ -46,7 +53,7 @@ public class RegistroDeClientes {
                 clientes.add(cliente);
             }
         }else{
-            System.out.println("Usuario nao pode ser criado. CPF ja existente no registro.");
+            imprimir("Usuario nao pode ser criado. CPF ja existente no registro.");
         }
     }
 
@@ -54,8 +61,8 @@ public class RegistroDeClientes {
      * Este método é responsável por atualizar dados de um cliente do registro de clientes
      * @param cliente
      */
-    public void atualizarCliente(Cliente cliente) throws InterruptedException {
-        System.out.println("Seu usuario está sendo atualizado...");
+    public void atualizarCliente(Cliente cliente) {
+        imprimir("Seu usuario está sendo atualizado...");
         for(int i = 0; i < clientes.size(); i++){
             if(clientes.get(i).getCpf().equals(cliente.getCpf())){
                 clientes.remove(i);
@@ -70,7 +77,7 @@ public class RegistroDeClientes {
      * @param cliente
      */
     public void removerCliente(Cliente cliente){
-        System.out.println("Seu usuario está sendo apagado...");
+        imprimir("Seu usuario está sendo apagado...");
         for(int i = 0; i < this.clientes.size(); i++){
             if(this.clientes.get(i).getCpf().equals(cliente.getCpf())){
                 this.clientes.remove(i);
@@ -100,10 +107,10 @@ public class RegistroDeClientes {
     public void visualizarContas(Cliente cliente){
         for(Conta conta : cliente.getContas()){
             if(conta instanceof ContaPoupanca contaPoupanca){
-                System.out.println("[ Conta" + contaPoupanca.getTipoDaConta() + " no: " + conta.getNumeroConta() + " | Saldo: " + new DecimalFormat("0.00").format( conta.getSaldo()) + " | DividaEmprestimo: " + new DecimalFormat("0.00").format(conta.getDividaDeEmprestimo()) + " | Cartao Debito no: " + conta.getCartao().getNumero() +"| csv: "+ conta.getCartao().getCsv() + " ]");
+                imprimir("[ Conta" + contaPoupanca.getTipoDaConta() + " no: " + conta.getNumeroConta() + " | Saldo: " + formatar(conta.getSaldo()) + " | DividaEmprestimo: " + formatar(conta.getDividaDeEmprestimo()) + " | Cartao Debito no: " + conta.getCartao().getNumero() + CSV_LABEL + conta.getCartao().getCsv() + " ]");
             }
             else if(conta instanceof ContaCorrente contaCorrente){
-                System.out.println("[ Conta" + contaCorrente.getTipoDaConta() + "no: " + conta.getNumeroConta() + " | Saldo: " + new DecimalFormat("0.00").format(conta.getSaldo()) + " | DividaEmprestimo: " + new DecimalFormat("0.00").format(conta.getDividaDeEmprestimo()) + " | Cartao Debito no: " + conta.getCartao().getNumero() +"| csv: "+ conta.getCartao().getCsv() + " | Cartao Credito no: " + contaCorrente.getCartaoCredito().getNumero() + "| csv: "+ contaCorrente.getCartaoCredito().getCsv() + "| fatura: "+  new DecimalFormat("0.00").format(contaCorrente.getCartaoCredito().getFatura()) +" ]");
+                imprimir("[ Conta" + contaCorrente.getTipoDaConta() + "no: " + conta.getNumeroConta() + " | Saldo: " + formatar(conta.getSaldo()) + " | DividaEmprestimo: " + formatar(conta.getDividaDeEmprestimo()) + " | Cartao Debito no: " + conta.getCartao().getNumero() + CSV_LABEL + conta.getCartao().getCsv() + " | Cartao Credito no: " + contaCorrente.getCartaoCredito().getNumero() + CSV_LABEL + contaCorrente.getCartaoCredito().getCsv() + "| fatura: "+ formatar(contaCorrente.getCartaoCredito().getFatura()) +" ]");
             }
         }
     }
@@ -115,11 +122,11 @@ public class RegistroDeClientes {
     public void visualizarDetalhesDoCliente(String cpf){
         for(Cliente cliente : clientes){
             if(cliente instanceof ClienteWinx clienteWinx && cliente.getCpf().equals(cpf)){
-                System.out.println("Nome: " + cliente.getNome() + " | CPF: " + cliente.getCpf() + " | Pontos por compra: " + clienteWinx.getPontosDeCompra() + "\nContas:");
+                imprimir(NOME_LABEL + cliente.getNome() + " | CPF: " + cliente.getCpf() + " | Pontos por compra: " + clienteWinx.getPontosDeCompra() + CONTAS_LABEL);
                 visualizarContas(cliente);
             }
             else if(!(cliente instanceof ClienteWinx) && cliente.getCpf().equals(cpf)){
-                System.out.println("Nome: " + cliente.getNome() + "| CPF: " + cliente.getCpf() + "\nContas:");
+                imprimir(NOME_LABEL + cliente.getNome() + "| CPF: " + cliente.getCpf() + CONTAS_LABEL);
                 visualizarContas(cliente);
             }
         }
@@ -143,16 +150,16 @@ public class RegistroDeClientes {
      * Este método é responsável por exibir a lista de clientes registrados.
      */
     public void printarListaDeClientes(){
-        System.out.println("------------------ Clientes --------------------");
+        imprimir("------------------ Clientes --------------------");
         for(Cliente cliente : clientes){
             if(cliente instanceof ClienteWinx clienteWinx){
-                System.out.println("Nome: " + cliente.getNome() + " | CPF: " + cliente.getCpf() + " | Pontos por compra: " + clienteWinx.getPontosDeCompra() + "\nContas:");
+                imprimir(NOME_LABEL + cliente.getNome() + " | CPF: " + cliente.getCpf() + " | Pontos por compra: " + clienteWinx.getPontosDeCompra() + CONTAS_LABEL);
             }
             else{
-                System.out.println("Nome: " + cliente.getNome() + "| CPF: " + cliente.getCpf() + "\nContas:");
+                imprimir(NOME_LABEL + cliente.getNome() + "| CPF: " + cliente.getCpf() + CONTAS_LABEL);
             }
             visualizarContas(cliente);
-            System.out.println("------------------------------------------------");
+            imprimir("------------------------------------------------");
         }
     }
 
@@ -167,12 +174,12 @@ public class RegistroDeClientes {
      * Método responsável por adicionar uma coleção inteira ao atributo do tipo ArrayList de clientes da classe para carregar dados registrados em um arquivo de outras vezes que o programa foi executado.
      * @param clientes
      */
-    public void setClientes(ArrayList<Cliente> clientes) {
+    public void setClientes(List<Cliente> clientes) {
         this.clientes.addAll(clientes);
     }
 
 
-    public ArrayList<Cliente> getClientes() {
+    public List<Cliente> getClientes() {
         return clientes;
     }
 
@@ -184,5 +191,14 @@ public class RegistroDeClientes {
             instancia = new RegistroDeClientes();
         }
         return instancia;
+    }
+
+    private String formatar(double valor) {
+        return FORMATO_MOEDA.format(valor);
+    }
+
+    @SuppressWarnings("java:S106")
+    private void imprimir(String mensagem) {
+        System.out.println(mensagem);
     }
 }

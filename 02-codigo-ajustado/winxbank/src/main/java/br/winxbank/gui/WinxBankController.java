@@ -11,7 +11,7 @@ import br.winxbank.sistemaclientes.RegistroDeClientes;
 import br.winxbank.tempo.Ano;
 
 import java.text.DecimalFormat;
-import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Orquestra as operações do WinxBank para a interface gráfica, espelhando
@@ -427,7 +427,7 @@ public class WinxBankController {
 
     // ----------------------------- CONSULTAS --------------------------------
 
-    public ArrayList<Cliente> getClientes() {
+    public List<Cliente> getClientes() {
         return RegistroDeClientes.getInstancia().getClientes();
     }
 
@@ -455,11 +455,7 @@ public class WinxBankController {
     }
 
     private void atualizar(Cliente cliente) {
-        try {
-            RegistroDeClientes.getInstancia().atualizarCliente(cliente);
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-        }
+        RegistroDeClientes.getInstancia().atualizarCliente(cliente);
     }
 
     /** Replica o bloco {@code finally} do {@code Main}: grava clientes, mês e banco. */

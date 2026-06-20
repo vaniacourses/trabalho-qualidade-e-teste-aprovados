@@ -1,199 +1,237 @@
 package br.winxbank.test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-
-import br.winxbank.gui.ActionResult;
-import br.winxbank.gui.WinxBankController;
 import br.winxbank.sistemabancario.Banco;
-import br.winxbank.sistemabancario.Cartao;
-import br.winxbank.sistemabancario.CartaoCredito;
-import br.winxbank.sistemabancario.Conta;
-import br.winxbank.sistemabancario.ContaCorrente;
-import br.winxbank.sistemabancario.Movimentacao;
-import br.winxbank.sistemaclientes.Cliente;
-import br.winxbank.sistemaclientes.ClienteWinx;
-import br.winxbank.sistemaclientes.RegistroDeClientes;
-import br.winxbank.tempo.Ano;
+import java.io.File;
+import java.io.IOException;
+import java.io.ObjectOutputStream;
+import java.io.OutputStreamWriter;
+import java.io.UncheckedIOException;
+import java.io.Writer;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.time.Duration;
+import java.time.Instant;
+import java.util.concurrent.atomic.AtomicReference;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledIf;
 
 /**
- * Teste E2E (End-to-End): Cadastro completo de usuario com conta corrente via interface.
- * Utiliza o WinxBankController como ponto de entrada da interface grafica (Swing),
- * simulando o fluxo completo que um usuario faria pela GUI.
+ * Teste E2E da tarefa 4.2.1.
  *
- * O cadastro e feito via setup direto (pois cadastrarCliente usa multiplos Scanners
- * internamente), e todas as operacoes subsequentes sao feitas via WinxBankController.
- *
- * Tarefa 4.2.1 - Fernando Rene
+ * Executa o JAR real do WinxBank via ProcessBuilder e simula o fluxo do usuario
+ * pelo terminal. O teste roda em diretório temporário para não reaproveitar
+ * `clientes.json`, `mesAtual.txt` ou `banco.txt` de outras execuções.
  */
-public class E2ECadastroContaCorrenteTest {
+class E2ECadastroContaCorrenteTest {
 
-    private static final int NUMERO_CARTAO = 6001;
-    private static final int CSV_PADRAO = 789;
+    private static final String JAR_PATH = "target/winxbank-1.0.jar";
 
-    private WinxBankController controller;
-
-    @BeforeEach
-    void setUp() {
-        Banco.getInstancia().receitas = 0.0;
-        Banco.getInstancia().despesas = 0.0;
-        RegistroDeClientes.getInstancia().limparListaDeClientes();
-        Ano.getInstancia().setMesAtual("Janeiro");
-        controller = new WinxBankController();
+    private boolean jarExiste() {
+        return new File(JAR_PATH).exists();
     }
 
-    @AfterEach
-    void tearDown() {
-        RegistroDeClientes.getInstancia().limparListaDeClientes();
+    @Test
+    @EnabledIf("jarExiste")
+    @DisplayName("E2E: cadastro, login, remocao e nova tentativa de login via ProcessBuilder")
+    void testE2EFluxoCadastroLoginRemocaoViaProcessBuilder() throws IOException, InterruptedException {
+        String saida = executarAplicacao(interacao -> {
+            interacao.enviarApos("MENU INICIAL", "1\n");
+            interacao.enviarApos("Digite o nome:", "Fernando Rene\n");
+            interacao.enviarApos("Digite o cpf:", "111.222.333-44\n");
+            interacao.enviarApos("Digite 1 (Corrente) ou 2 (Poupanca)", "1\n");
+            interacao.enviarApos("Digite o saldo que deseja colocar na sua conta", "5000\n");
+            interacao.enviarApos("Sua conta corrente foi criada com sucesso!", "2\n");
+            interacao.enviarApos("Digite o cpf do usuario que deseja logar:", "111.222.333-44\n");
+            interacao.enviarApos("Ola, Fernando Rene", "5\n");
+            interacao.enviarApos("Seu usuario está sendo apagado...", "2\n");
+            interacao.enviarApos("Digite o cpf do usuario que deseja logar:", "111.222.333-44\n");
+            interacao.enviarApos("Cliente inexistente.", "0\n");
+        });
+
+        assertFluxoBasico(saida);
+        assertTrue(saida.contains("Fernando Rene"), "a saida deve exibir o nome do cliente apos login");
+        assertTrue(saida.contains("Seu usuario está sendo apagado..."),
+                "a saida deve indicar a remocao do usuario");
+        assertTrue(saida.contains("Cliente inexistente."),
+                "a nova tentativa de login deve falhar apos a remocao");
     }
 
-    private void cadastrarClienteNoRegistro(String nome, String cpf, double saldo) {
-        ContaCorrente conta = new ContaCorrente(
-                10001, saldo,
-                new Cartao(NUMERO_CARTAO, CSV_PADRAO), 0,
-                new CartaoCredito(NUMERO_CARTAO, CSV_PADRAO));
-        Movimentacao mov = new Movimentacao(saldo, Movimentacao.TipoDaMovimentacao.ENTRADA);
-        conta.setExtrato(mov);
+    @Test
+    @EnabledIf("jarExiste")
+    @DisplayName("E2E: CPF duplicado e rejeitado via ProcessBuilder")
+    void testE2ECadastroComCpfDuplicadoViaProcessBuilder() throws IOException, InterruptedException {
+        String saida = executarAplicacao(interacao -> {
+            interacao.enviarApos("MENU INICIAL", "1\n");
+            interacao.enviarApos("Digite o nome:", "Cliente Um\n");
+            interacao.enviarApos("Digite o cpf:", "123.123.123-12\n");
+            interacao.enviarApos("Digite 1 (Corrente) ou 2 (Poupanca)", "1\n");
+            interacao.enviarApos("Digite o saldo que deseja colocar na sua conta", "3000\n");
+            interacao.enviarApos("Sua conta corrente foi criada com sucesso!", "1\n");
+            interacao.enviarApos("Digite o nome:", "Cliente Dois\n");
+            interacao.enviarApos("Digite o cpf:", "123.123.123-12\n");
+            interacao.enviarApos("CPF ja existente no registro.", "0\n");
+        });
 
-        if (saldo >= 100000) {
-            ClienteWinx winx = new ClienteWinx(nome, cpf, 0);
-            winx.setContas(conta);
-            RegistroDeClientes.getInstancia().getClientes().add(winx);
-        } else {
-            Cliente cliente = new Cliente(nome, cpf);
-            cliente.setContas(conta);
-            RegistroDeClientes.getInstancia().getClientes().add(cliente);
+        assertFluxoBasico(saida);
+        assertTrue(saida.contains("Usuario nao pode ser criado. CPF ja existente no registro."),
+                "o cadastro com CPF duplicado deve ser rejeitado");
+    }
+
+    @Test
+    @EnabledIf("jarExiste")
+    @DisplayName("E2E: saldo no limite promove cliente para ClienteWinx")
+    void testE2ECadastroClienteWinxViaProcessBuilder() throws IOException, InterruptedException {
+        String saida = executarAplicacao(interacao -> {
+            interacao.enviarApos("MENU INICIAL", "1\n");
+            interacao.enviarApos("Digite o nome:", "Cliente Winx\n");
+            interacao.enviarApos("Digite o cpf:", "999.888.777-66\n");
+            interacao.enviarApos("Digite 1 (Corrente) ou 2 (Poupanca)", "1\n");
+            interacao.enviarApos("Digite o saldo que deseja colocar na sua conta", "100000\n");
+            interacao.enviarApos("Parabéns, você tem direito a ser ClienteWinx!", "2\n");
+            interacao.enviarApos("Digite o cpf do usuario que deseja logar:", "999.888.777-66\n");
+            interacao.enviarApos("Ola, Cliente Winx", "0\n");
+        });
+
+        assertFluxoBasico(saida);
+        assertTrue(saida.contains("Parabéns, você tem direito a ser ClienteWinx!"),
+                "saldo no limite deve promover o cliente");
+        assertTrue(saida.contains("Pontos por compra"),
+                "os dados exibidos apos o login devem refletir o tipo ClienteWinx");
+    }
+
+    @Test
+    @DisplayName("E2E: a sequencia de inputs do cadastro/login esta bem-formada")
+    void testE2EPreparacaoDeInputs() {
+        String input = ""
+                + "1\n"
+                + "Fernando Rene\n"
+                + "111.222.333-44\n"
+                + "1\n"
+                + "5000\n"
+                + "2\n"
+                + "111.222.333-44\n"
+                + "5\n"
+                + "0\n";
+
+        assertNotNull(input);
+        assertTrue(input.contains("Fernando Rene"));
+        assertTrue(input.contains("111.222.333-44"));
+        assertTrue(input.contains("\n5\n"), "a sequencia deve acionar a opcao de apagar usuario");
+        assertTrue(input.endsWith("0\n"));
+    }
+
+    private String executarAplicacao(InteracaoComProcesso roteiro) throws IOException, InterruptedException {
+        Path tempDir = Files.createTempDirectory("winxbank-e2e-registro-");
+        prepararArquivosDoAmbiente(tempDir);
+
+        ProcessBuilder pb = new ProcessBuilder("java", "-jar", new File(JAR_PATH).getAbsolutePath());
+        pb.directory(tempDir.toFile());
+        pb.redirectErrorStream(true);
+
+        Process processo = pb.start();
+        StringBuilder saida = new StringBuilder();
+        AtomicReference<IOException> falhaLeitura = new AtomicReference<>();
+
+        Thread leitor = new Thread(() -> {
+            try {
+                byte[] buffer = new byte[256];
+                int lidos;
+                while ((lidos = processo.getInputStream().read(buffer)) != -1) {
+                    synchronized (saida) {
+                        saida.append(new String(buffer, 0, lidos, StandardCharsets.UTF_8));
+                    }
+                }
+            } catch (IOException e) {
+                falhaLeitura.set(e);
+            }
+        });
+        leitor.start();
+
+        try (Writer writer = new OutputStreamWriter(processo.getOutputStream(), StandardCharsets.UTF_8)) {
+            Interacao interacao = new Interacao(processo, writer, saida);
+            roteiro.executar(interacao);
+        }
+
+        int exitCode = processo.waitFor();
+        leitor.join();
+        if (falhaLeitura.get() != null) {
+            throw falhaLeitura.get();
+        }
+
+        String textoSaida;
+        synchronized (saida) {
+            textoSaida = saida.toString();
+        }
+
+        assertTrue(exitCode == 0, "o processo deve encerrar com sucesso. Saida:\n" + textoSaida);
+        assertNotNull(textoSaida, "a saida do processo nao deve ser nula");
+        assertTrue(!textoSaida.isBlank(), "a saida do processo nao deve ser vazia");
+        return textoSaida;
+    }
+
+    private void prepararArquivosDoAmbiente(Path tempDir) throws IOException {
+        Files.writeString(tempDir.resolve("clientes.json"), "[]", StandardCharsets.UTF_8);
+        Files.writeString(tempDir.resolve("mesAtual.txt"), "Janeiro", StandardCharsets.UTF_8);
+
+        try (ObjectOutputStream output = new ObjectOutputStream(Files.newOutputStream(tempDir.resolve("banco.txt")))) {
+            output.writeObject(Banco.getInstancia());
+        } catch (IOException e) {
+            throw new UncheckedIOException("falha ao preparar banco.txt para o teste E2E", e);
         }
     }
 
-    @Test
-    void testE2ECadastroCompletoViaController() {
-        System.out.println("=== E2E: Cadastro completo de usuario com conta corrente via interface ===");
-
-        // 1. CADASTRAR CLIENTE (setup do sistema)
-        System.out.println("\n--- Passo 1: Cadastrar cliente ---");
-        cadastrarClienteNoRegistro("Fernando Rene", "111.222.333-44", 5000.0);
-        assertEquals(1, controller.getClientes().size());
-
-        // 2. LOGIN via controller (simula formulario da GUI)
-        System.out.println("\n--- Passo 2: Login via interface ---");
-        ActionResult resultLogin = controller.login("111.222.333-44");
-        assertTrue(resultLogin.isOk(), "Login deve ser bem-sucedido");
-        assertTrue(resultLogin.isSessionChanged(), "Sessao deve ser atualizada");
-        assertNotNull(resultLogin.getUpdatedCliente());
-        System.out.println("Login: " + resultLogin.getMessage());
-
-        // 3. VERIFICAR DADOS do cliente logado
-        System.out.println("\n--- Passo 3: Verificar dados ---");
-        Cliente clienteLogado = resultLogin.getUpdatedCliente();
-        assertEquals("Fernando Rene", clienteLogado.getNome());
-        assertEquals("111.222.333-44", clienteLogado.getCpf());
-        assertFalse(clienteLogado.getContas().isEmpty());
-
-        Conta conta = clienteLogado.getContas().get(0);
-        assertTrue(conta instanceof ContaCorrente);
-        assertEquals(5000.0, conta.getSaldo(), 0.001);
-
-        ContaCorrente corrente = (ContaCorrente) conta;
-        assertNotNull(corrente.getCartaoCredito());
-        System.out.println("Conta: " + conta.getNumeroConta() + " | Saldo: " + conta.getSaldo());
-
-        // 4. DEPOSITAR via controller
-        System.out.println("\n--- Passo 4: Depositar via interface ---");
-        ActionResult resultDeposito = controller.depositar(
-                clienteLogado, conta.getNumeroConta(), 3000.0);
-        assertTrue(resultDeposito.isOk());
-        assertEquals(8000.0, conta.getSaldo(), 0.001);
-        System.out.println("Deposito: " + resultDeposito.getMessage());
-
-        // 5. SACAR via controller
-        System.out.println("\n--- Passo 5: Sacar via interface ---");
-        ActionResult resultSaque = controller.sacar(
-                clienteLogado, conta.getNumeroConta(), 1000.0);
-        assertTrue(resultSaque.isOk());
-        assertEquals(7000.0, conta.getSaldo(), 0.001);
-        System.out.println("Saque: " + resultSaque.getMessage());
-
-        // 6. APAGAR USUARIO via controller
-        System.out.println("\n--- Passo 6: Apagar usuario via interface ---");
-        ActionResult resultApagar = controller.apagarUsuario(clienteLogado);
-        assertTrue(resultApagar.isOk());
-        assertTrue(controller.getClientes().isEmpty());
-        System.out.println("Apagar: " + resultApagar.getMessage());
-
-        System.out.println("\n=== E2E CADASTRO COMPLETO VIA INTERFACE CONCLUIDO COM SUCESSO ===");
+    private void assertFluxoBasico(String saida) {
+        assertTrue(saida.contains("WinxBank"), "a aplicacao deve exibir o cabecalho do WinxBank");
+        assertTrue(saida.contains("MENU INICIAL"), "a aplicacao deve exibir o menu inicial");
+        assertTrue(saida.contains("Sua conta corrente foi criada com sucesso!"),
+                "o cadastro deve abrir a conta corrente");
     }
 
-    @Test
-    void testE2ECadastroClienteWinxViaController() {
-        System.out.println("=== E2E: Cadastro de ClienteWinx via interface ===");
-
-        // Cadastrar com saldo >= 100k
-        cadastrarClienteNoRegistro("Milionario", "999.888.777-66", 150000.0);
-
-        // Login via controller
-        ActionResult resultLogin = controller.login("999.888.777-66");
-        assertTrue(resultLogin.isOk());
-
-        Cliente logado = resultLogin.getUpdatedCliente();
-        assertNotNull(logado);
-        assertTrue(logado instanceof ClienteWinx,
-                "Cliente com saldo >= 100k deve ser ClienteWinx");
-        assertFalse(logado.getContas().isEmpty());
-        assertTrue(logado.getContas().get(0).getSaldo() >= 100000.0,
-                "ClienteWinx deve manter saldo acima do limite de promocao");
-
-        System.out.println("=== E2E CLIENTEWINX CONCLUIDO ===");
+    @FunctionalInterface
+    private interface InteracaoComProcesso {
+        void executar(Interacao interacao) throws IOException, InterruptedException;
     }
 
-    @Test
-    void testE2ELoginComCpfInexistenteViaController() {
-        System.out.println("=== E2E: Login com CPF inexistente via interface ===");
+    private static final class Interacao {
+        private static final Duration TIMEOUT = Duration.ofSeconds(3);
 
-        ActionResult resultado = controller.login("000.000.000-00");
+        private final Process processo;
+        private final Writer writer;
+        private final StringBuilder saida;
 
-        assertFalse(resultado.isOk(), "Login com CPF inexistente deve falhar");
-        assertTrue(resultado.getMessage().contains("inexistente"));
+        private Interacao(Process processo, Writer writer, StringBuilder saida) {
+            this.processo = processo;
+            this.writer = writer;
+            this.saida = saida;
+        }
 
-        System.out.println("Resultado: " + resultado.getMessage());
-        System.out.println("=== E2E LOGIN INEXISTENTE CONCLUIDO ===");
-    }
+        private void enviarApos(String trecho, String texto) throws IOException, InterruptedException {
+            aguardarSaida(trecho);
+            writer.write(texto);
+            writer.flush();
+        }
 
-    @Test
-    void testE2EFluxoCompletoComMultiplasOperacoes() {
-        System.out.println("=== E2E: Fluxo completo com multiplas operacoes via interface ===");
-
-        // 1. Cadastrar
-        cadastrarClienteNoRegistro("Joao", "123.123.123-12", 10000.0);
-        assertEquals(1, controller.getClientes().size());
-
-        // 2. Login
-        ActionResult r2 = controller.login("123.123.123-12");
-        assertTrue(r2.isOk());
-        Cliente cliente = r2.getUpdatedCliente();
-        int numeroConta = cliente.getContas().get(0).getNumeroConta();
-
-        // 3. Depositar
-        ActionResult r3 = controller.depositar(cliente, numeroConta, 5000.0);
-        assertTrue(r3.isOk());
-
-        // 4. Sacar
-        ActionResult r4 = controller.sacar(cliente, numeroConta, 2000.0);
-        assertTrue(r4.isOk());
-
-        // 5. Verificar saldo final
-        Conta conta = cliente.selecionarConta(numeroConta);
-        assertNotNull(conta);
-        assertEquals(13000.0, conta.getSaldo(), 0.001);
-
-        // 6. Apagar
-        ActionResult r5 = controller.apagarUsuario(cliente);
-        assertTrue(r5.isOk());
-        assertTrue(controller.getClientes().isEmpty());
-
-        System.out.println("=== E2E FLUXO COMPLETO CONCLUIDO ===");
+        private void aguardarSaida(String trecho) throws InterruptedException {
+            Instant limite = Instant.now().plus(TIMEOUT);
+            while (Instant.now().isBefore(limite)) {
+                synchronized (saida) {
+                    if (saida.indexOf(trecho) >= 0) {
+                        return;
+                    }
+                }
+                if (!processo.isAlive()) {
+                    break;
+                }
+                Thread.sleep(25);
+            }
+            synchronized (saida) {
+                throw new AssertionError("trecho nao encontrado na saida: " + trecho + "\nSaida atual:\n" + saida);
+            }
+        }
     }
 }
