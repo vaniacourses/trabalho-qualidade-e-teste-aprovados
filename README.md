@@ -4,6 +4,16 @@ Projeto desenvolvido pelo grupo Aprovados para a disciplina de **Qualidade e Tes
 
 O sistema escolhido dentre as aplicações listadas (https://github.com/orgs/repo-software-testing-courses/repositories) simula operações bancárias básicas. O objetivo é concluir os requisitos para a entrega seguindo boas práticas de teste aprendidas em sala.
 
+## Integrantes do Grupo
+
+|#|Nome|GitHub|
+|-|-|-|
+|1|Fernando Rene|fernandorcafilho|
+|2|Joao Omar|joaomar1|
+|3|Caio Marcio / Caio Silva|cakocaito|
+|4|Rafael Lucio|Disklo|
+|5|Joao Victor Amaral|JvamleiteUff|
+
 
 # 🛠️ Ferramentas necessárias
 

@@ -297,16 +297,16 @@ public class ContaCorrenteTest {
     }
 
     @Test
-    void testCobrarJurusEmprestimoQuandoDividaPositiva() {
-        System.out.println("Teste cobrar jurus emprestimo quando divida positiva");
+    void testCobrarJurosEmprestimoQuandoDividaPositiva() {
+        System.out.println("Teste cobrar juros emprestimo quando divida positiva");
 
         double dividaInicial = 1000.0;
         ContaCorrente conta = criarContaCorrenteComDivida(SALDO_INICIAL, dividaInicial);
 
-        conta.cobrarJurusEmprestimo();
+        conta.cobrarJurosEmprestimo();
 
-        double taxaJurus = 12.75;
-        double resultado = dividaInicial / taxaJurus;
+        double taxaJuros = 12.75;
+        double resultado = dividaInicial / taxaJuros;
         double dividaEsperada = dividaInicial - resultado;
 
         System.out.println("Divida inicial: " + dividaInicial);
@@ -317,12 +317,12 @@ public class ContaCorrenteTest {
     }
 
     @Test
-    void testCobrarJurusEmprestimoQuandoDividaZerada() {
-        System.out.println("Teste cobrar jurus emprestimo quando divida zerada");
+    void testCobrarJurosEmprestimoQuandoDividaZerada() {
+        System.out.println("Teste cobrar juros emprestimo quando divida zerada");
 
         ContaCorrente conta = criarContaCorrente(SALDO_INICIAL);
 
-        conta.cobrarJurusEmprestimo();
+        conta.cobrarJurosEmprestimo();
 
         System.out.println("Divida final: " + conta.getDividaDeEmprestimo());
 

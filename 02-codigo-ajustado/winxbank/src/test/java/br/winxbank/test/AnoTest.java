@@ -12,20 +12,26 @@ import br.winxbank.sistemaclientes.Cliente;
 import br.winxbank.sistemaclientes.RegistroDeClientes;
 import br.winxbank.repository.ArquivoDeMesAtual;
 import java.io.File;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
+import java.lang.reflect.Field;
 
 public class AnoTest {
 
-    @BeforeEach
-    void setUp() {
-        Ano.getInstancia().setMesAtual("Janeiro");
-        RegistroDeClientes.getInstancia().limparListaDeClientes();
-        Banco.getInstancia().setReceitas(0);
-        Banco.getInstancia().setDespesas(0);
-    }
+	@BeforeEach
+	void setUp() throws Exception {
+	    Ano.getInstancia().setMesAtual("Janeiro");
+	    RegistroDeClientes.getInstancia().limparListaDeClientes();
+	    Banco.getInstancia().setReceitas(0);
+	    Banco.getInstancia().setDespesas(0);
+
+	    Field field = Ano.class.getDeclaredField("count");
+	    field.setAccessible(true);
+	    field.setLong(Ano.getInstancia(), 0L);
+	}
 
     @Test
     void testGetInstanciaRetornaMesmaInstancia() {
-        System.out.println("Teste get instancia retorna mesma instancia");
         Ano instancia1 = Ano.getInstancia();
         Ano instancia2 = Ano.getInstancia();
         assertSame(instancia1, instancia2, "Deve retornar a mesma instância (Singleton)");
@@ -33,16 +39,13 @@ public class AnoTest {
 
     @Test
     void testSetMesAtualValido() {
-        System.out.println("Teste set mes atual valido");
         Ano.getInstancia().setMesAtual("Marco");
         assertEquals("Marco", Ano.getInstancia().getMesAtual());
         assertEquals(2, Ano.getInstancia().getIndexMesAtual());
     }
 
     @Test
-    void testFazerMesPassarCicloDeCinco() {
-        System.out.println("Teste fazer mes passar ciclo de cinco");
-        
+    void testFazerMesPassarCicloDeCinco() {        
         int initialIndex = Ano.getInstancia().getIndexMesAtual();
         int seguranca = 0;
         while(Ano.getInstancia().getIndexMesAtual() == initialIndex && seguranca < 10) {
@@ -63,7 +66,6 @@ public class AnoTest {
 
     @Test
     void testFazerMesPassarResetaParaJaneiroAposDezembro() {
-        System.out.println("Teste fazer mes passar reseta para janeiro apos dezembro");
         Ano.getInstancia().setMesAtual("Dezembro");
         int seguranca = 0;
         while(Ano.getInstancia().getIndexMesAtual() == 11 && seguranca < 10) {
@@ -77,7 +79,6 @@ public class AnoTest {
 
     @Test
     void testFazerMesPassarGeraMovimentacaoNoBanco() {
-        System.out.println("Teste fazer mes passar gera movimentacao no banco");
         double saldoInicial = 1000.0;
         Cliente cliente = new Cliente("Test", "123.456.789-00");
         Cartao cartao = new Cartao(1234, 999);
@@ -89,14 +90,13 @@ public class AnoTest {
         while(Ano.getInstancia().getIndexMesAtual() == initialIndex) {
             Ano.getInstancia().fazerMesPassar();
         }
-        double saldoEsperado = saldoInicial - 13.0; // taxaManutencaoConta na interface OperacoesAutomaticas é 13.0
+        double saldoEsperado = saldoInicial - 13.0;
         assertEquals(saldoEsperado, conta.getSaldo(), 0.001, "A taxa de manutenção deve ser descontada na mudança de mês");
         assertTrue(Banco.getInstancia().getReceitas() >= 13.0, "A receita do banco deve aumentar com a taxa");
     }
 
     @Test
     void testIntegracaoComArquivoDeMesAtual() {
-        System.out.println("Teste integracao com arquivo de mes atual");
         String mesTeste = "Julho";
         Ano.getInstancia().setMesAtual(mesTeste);
         ArquivoDeMesAtual.getInstancia().escreverMesAtual();
@@ -107,5 +107,112 @@ public class AnoTest {
         if(file.exists()) {
             file.delete();
         }
+    }
+    
+    @Test
+    void testSetMesAtualInvalido() {
+        Ano ano = Ano.getInstancia();
+
+        ano.setMesAtual("Janeiro");
+        int indexAnterior = ano.getIndexMesAtual();
+
+        ano.setMesAtual("Inválido");
+
+        assertEquals("Inválido", ano.getMesAtual());
+        assertEquals(indexAnterior, ano.getIndexMesAtual());
+    }
+    
+    @ParameterizedTest
+    @CsvSource({
+            "Janeiro,0",
+            "Fevereiro,1",
+            "Marco,2",
+            "Abril,3",
+            "Maio,4",
+            "Junho,5",
+            "Julho,6",
+            "Agosto,7",
+            "Setembro,8",
+            "Outubro,9",
+            "Novembro,10",
+            "Dezembro,11"
+    })
+    void testTodosOsMeses(String mes, int indiceEsperado) {
+
+        Ano.getInstancia().setMesAtual(mes);
+
+        assertEquals(mes, Ano.getInstancia().getMesAtual());
+        assertEquals(indiceEsperado,
+                Ano.getInstancia().getIndexMesAtual());
+    }
+    
+    @Test
+    void testRetornoFazerMesPassar() {
+
+        Ano.getInstancia().setMesAtual("Janeiro");
+
+        int retorno = Ano.getInstancia().fazerMesPassar();
+
+        assertEquals(
+                Ano.getInstancia().getIndexMesAtual(),
+                retorno
+        );
+    }
+    
+    @Test
+    void testOverflowDoContador() throws Exception {
+
+        Field field = Ano.class.getDeclaredField("count");
+        field.setAccessible(true);
+
+        field.setLong(Ano.getInstancia(), Long.MAX_VALUE);
+
+        Ano.getInstancia().fazerMesPassar();
+
+        long valorAtual = field.getLong(Ano.getInstancia());
+
+        assertEquals(0L, valorAtual);
+    }
+    
+    @Test
+    void testNaoDeveMudarMesQuandoCountNaoForMultiploDeCinco()
+            throws Exception {
+
+        Field field = Ano.class.getDeclaredField("count");
+        field.setAccessible(true);
+
+        field.setLong(Ano.getInstancia(), 1);
+
+        Ano.getInstancia().setMesAtual("Janeiro");
+
+        int indexAnterior =
+                Ano.getInstancia().getIndexMesAtual();
+
+        Ano.getInstancia().fazerMesPassar();
+
+        assertEquals(
+                indexAnterior,
+                Ano.getInstancia().getIndexMesAtual()
+        );
+    }
+    
+    @Test
+    void testMesAtualDeveSerAtualizadoAoPassarMes() {
+
+        Ano.getInstancia().setMesAtual("Janeiro");
+
+        int indiceInicial =
+                Ano.getInstancia().getIndexMesAtual();
+
+        while (Ano.getInstancia().getIndexMesAtual()
+                == indiceInicial) {
+
+            Ano.getInstancia().fazerMesPassar();
+        }
+
+        assertEquals(
+                "Fevereiro",
+                Ano.getInstancia().getMesAtual()
+        );
     }
 }

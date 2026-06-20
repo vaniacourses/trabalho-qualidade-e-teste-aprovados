@@ -67,11 +67,11 @@ public abstract class Conta implements OperacoesAutomaticas{
     }
 
     /**
-     * Método responsável por cobrar jurus de um emprestimo conforme meses passados.
+     * Método responsável por cobrar juros de um emprestimo conforme meses passados.
      */
-    public void cobrarJurusEmprestimo(){
+    public void cobrarJurosEmprestimo(){
         if(this.dividaDeEmprestimo > 0){
-            double resultado = dividaDeEmprestimo / taxaJurus;
+            double resultado = dividaDeEmprestimo / taxaJuros;
             this.dividaDeEmprestimo -= resultado;
         }
     }

@@ -21,15 +21,18 @@ public class RegistroDeClientes {
     private static final DecimalFormat FORMATO_MOEDA = new DecimalFormat("0.00");
 
     private static RegistroDeClientes instancia;
-    private final List<Cliente> clientes = new ArrayList<>();
+    private ArrayList<Cliente> clientes = new ArrayList<Cliente>();
+    
+    public void cadastrarCliente(){
+        cadastrarCliente(new Scanner(System.in));
+    }
 
     /**
      * Este método é responsável por cadastrar um cliente no registro de clientes.
      * Se o cliente criar uma conta com mais de 100 mil, ele se torna ClienteWix.
      */
-    public void cadastrarCliente(){
-        Scanner sc = new Scanner(System.in);
-        imprimir("Você está cadastrando um cliente\nDigite o nome:");
+    public void cadastrarCliente(Scanner sc){
+        System.out.println("Você está cadastrando um cliente\nDigite o nome:");
         String nome = sc.nextLine();
         imprimir("Digite o cpf:");
         String cpf = sc.nextLine();
