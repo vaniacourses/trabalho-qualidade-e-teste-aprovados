@@ -269,11 +269,9 @@ Plugins a adicionar para suportar a Entrega 2:
 ### Joao Victor Amaral
 
 * \[X] Ampliar `AnoTest` (1.5)
-* \[  ] Teste de integracao: passagem de meses + movimentacoes (2.5)
-* \[  ] Teste de sistema: fluxo ClienteWinx (3.5)
-* \[  ] Teste E2E com Selenium (4.5)
-* \[  ] Teste funcional caixa-preta: `fazerMesPassar` (6.5)
-* \[  ] Teste estrutural >=80% branch: `Ano` (7.5)
-* \[  ] Teste mutacao >=80%: `Ano` (8.5)
-* \[  ] ISO 25010: Manutenibilidade + Portabilidade (9)
-* \[  ] Correcao SonarQube: `Ano` (10)
+* \[x] Teste de integracao: passagem de meses + movimentacoes (2.5)
+* \[x] Teste de sistema: fluxo ClienteWinx (3.5)
+* \[x] Teste E2E com ProcessBuilder (4.5)
+* \[x] Teste estrutural >=80% branch: `Ano` (7.5)
+* \[x] Teste mutacao >=80%: `Ano` (8.5)
+* \[x] Correcao SonarQube: `Ano` (10)
