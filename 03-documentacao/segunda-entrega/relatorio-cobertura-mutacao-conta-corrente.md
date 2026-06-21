@@ -139,26 +139,7 @@ Testa a interação real entre `ContaCorrente`, `CartaoCredito`, `Banco` e `Cont
 | `movimentarEntreBancoConta` com contas mistas (corrente + poupança) |
 | Verificação de extrato pós-movimentação automática |
 
-### 2.5. Teste Não Funcional de Segurança (`SegurancaTest.java` - 10 testes)
-
-Arquivo: `src/test/java/br/winxbank/test/SegurancaTest.java` (207 linhas)
-
-Teste de requisito **não funcional** — diferente dos testes funcionais que validam se uma feature funciona, este verifica se o sistema resiste a entradas inválidas e abusos. Valida proteções de segurança relacionadas à `ContaCorrente`:
-
-| Verificação |
-|-------------|
-| `setSaldo` com valor negativo não corrompe saldo |
-| `setSaldo` com valor negativo grande (saldo pode ficar negativo) |
-| `depositar` com valor negativo não altera saldo |
-| `sacar` com valor negativo não altera saldo |
-| `comprar` com valor negativo não processa |
-| Crédito acima do limite do cartão é rejeitado |
-| `ajustarLimite` com zero/negativo é rejeitado |
-| CPF duplicado é rejeitado no cadastro |
-| `Banco.setReceitas` ignora valores negativos |
-| `Banco.setDespesas` ignora valores negativos |
-
-### 2.6. Testes de Sistema (Fluxo PIX — `SistemaPixTest.java` — 4 cenários)
+### 2.5. Testes de Sistema (Fluxo PIX — `SistemaPixTest.java` — 4 cenários)
 
 Arquivo: `src/test/java/br/winxbank/test/SistemaPixTest.java` (207 linhas)
 
@@ -171,7 +152,7 @@ Valida o fluxo completo de PIX entre dois clientes simulando o caminho real do u
 | PIX múltiplo entre contas do mesmo cliente |
 | PIX com valor zero (não altera saldos) |
 
-### 2.7. Testes E2E (PIX via ProcessBuilder — `E2EPixTest.java` — 2 cenários)
+### 2.6. Testes E2E (PIX via ProcessBuilder — `E2EPixTest.java` — 2 cenários)
 
 Arquivo: `src/test/java/br/winxbank/test/E2EPixTest.java` (117 linhas)
 
