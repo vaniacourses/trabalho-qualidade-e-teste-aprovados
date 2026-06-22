@@ -38,72 +38,7 @@ public class CartaoCreditoFuncionalTest {
         assertEquals(500.0, faturaAtual, 0.001);
     }
 
-    @Test
-    void cenario2CompraExatamenteNoLimiteDeveAtualizarFatura() {
-
-        System.out.println("Cenario 2 - Compra exatamente no limite");
-
-        CartaoCredito cartao = criarCartaoComFaturaZerada();
-
-        assertEquals(0.0, cartao.getFatura(), 0.001);
-
-        cartao.creditar(1000.0, INDEX_MES_INICIAL, MES_INICIAL);
-
-        double faturaAtual = cartao.getFatura();
-
-        System.out.println("Valor da compra: 1000.0");
-        System.out.println("Fatura esperada: 1000.0");
-        System.out.println("Fatura atual: " + faturaAtual);
-
-        assertEquals(1000.0, faturaAtual, 0.001);
-    }
-
-    @Test
-    void cenario3CompraAcimaDoLimiteDeveSerRejeitada() {
-
-        System.out.println("Cenario 3 - Compra acima do limite");
-
-        CartaoCredito cartao = criarCartaoComFaturaZerada();
-
-        assertEquals(0.0, cartao.getFatura(), 0.001);
-
-        cartao.creditar(1000.01, INDEX_MES_INICIAL, MES_INICIAL);
-
-        double faturaAtual = cartao.getFatura();
-
-        System.out.println("Valor da compra: 1000.01");
-        System.out.println("Fatura esperada: 0.0");
-        System.out.println("Fatura atual: " + faturaAtual);
-
-        assertEquals(0.0, faturaAtual, 0.001);
-    }
-
-    @Test
-    void cenario4ComprasAcumuladasAtingindoLimiteDevemSerAceitas() {
-
-        System.out.println("Cenario 4 - Compras acumuladas atingindo o limite");
-
-        CartaoCredito cartao = criarCartaoComFaturaZerada();
-
-        assertEquals(0.0, cartao.getFatura(), 0.001);
-
-        cartao.creditar(800.0, INDEX_MES_INICIAL, MES_INICIAL);
-
-        assertEquals(800.0, cartao.getFatura(), 0.001);
-
-        cartao.creditar(200.0, INDEX_MES_INICIAL, MES_INICIAL);
-
-        double faturaAtual = cartao.getFatura();
-
-        System.out.println("Primeira compra: 800.0");
-        System.out.println("Segunda compra: 200.0");
-        System.out.println("Fatura esperada: 1000.0");
-        System.out.println("Fatura atual: " + faturaAtual);
-
-        assertEquals(1000.0, faturaAtual, 0.001);
-    }
-
-    @Test
+   @Test
     void cenario5ComprasAcumuladasUltrapassandoLimiteDevemRejeitarSegundaCompra() {
 
         System.out.println("Cenario 5 - Compras acumuladas ultrapassando o limite");

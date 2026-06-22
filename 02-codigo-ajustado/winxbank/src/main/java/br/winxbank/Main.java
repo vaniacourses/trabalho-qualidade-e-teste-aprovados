@@ -32,9 +32,10 @@ public class Main {
         ArquivoDeClientes.getInstancia().readjason();
         ArquivoDeMesAtual.getInstancia().lerMesAtual();
         ArquivoBanco.getInstancia().construirBanco();
+        Scanner sc = new Scanner(System.in);
         RegistroDeClientes.getInstancia().printarListaDeClientes();
             while (decisao == 1 || decisao == 2 || decisao == 3 || decisao == 4 || decisao == 5 || decisao == 6 || decisao == 7 || decisao == 8 || decisao == 9 || decisao == 10 || decisao == 11 || decisao == 12 || decisao == 13 || decisao == 14 || decisao == 15 || decisao == 16 || decisao == 17 || decisao == 18 || decisao == 19){
-                Scanner sc = new Scanner(System.in);
+
                 if(clienteAtual.getNome() != null){
                     visualizarClienteAtual(clienteAtual);
                     System.out.println("Mes atual: " + Ano.getInstancia().getMesAtual());
@@ -51,10 +52,11 @@ public class Main {
                     Ano.getInstancia().fazerMesPassar();
                     switch (decisao){
                         // ----------------- MENU INICIAL ----------------- OBS: Antes e depois de haver usuario logado
-                        case 1: // CADASTRAR USUARIO
-                            RegistroDeClientes.getInstancia().cadastrarCliente();
-                            RegistroDeClientes.getInstancia().printarListaDeClientes();
-                            break;
+                    	case 1: // CADASTRAR USUARIO
+                    		sc.nextLine();
+                    			RegistroDeClientes.getInstancia().cadastrarCliente(sc);
+                    			RegistroDeClientes.getInstancia().printarListaDeClientes();
+                        break;
                         case 2: // LOGAR
                             RegistroDeClientes.getInstancia().printarListaDeClientes();
                             System.out.println("Digite o cpf do usuario que deseja logar:");
@@ -81,7 +83,7 @@ public class Main {
                                     throw new YouAreNotLoggedInException();
                                 }
                                 try {
-                                    Conta conta = Banco.getInstancia().abrirNovaConta();
+                                	Conta conta = Banco.getInstancia().abrirNovaConta(sc);
                                     Movimentacao movimentacao = new Movimentacao(conta.getSaldo(), Movimentacao.TipoDaMovimentacao.ENTRADA);
                                     conta.setExtrato(movimentacao);
                                     if(conta.getClass() == ContaPoupanca.class){
@@ -169,7 +171,11 @@ public class Main {
                                 if(clienteAtual.getClass() == ClienteWinx.class){
                                     ((ClienteWinx) clienteAtual).obterPontosDeCompra();
                                 }
-                                conta.comprar(valorCompra);
+                                if (conta instanceof ContaCorrente) {
+                                    ((ContaCorrente) conta).comprar(valorCompra, sc);
+                                } else {
+                                    conta.comprar(valorCompra);
+                                }
                                 Movimentacao movimentacao = new Movimentacao(valorCompra, Movimentacao.TipoDaMovimentacao.SAIDA);
                                 conta.setExtrato(movimentacao);
                                 RegistroDeClientes.getInstancia().atualizarCliente(clienteAtual);
@@ -285,7 +291,7 @@ public class Main {
                                 else if(conta.getClass() != ContaCorrente.class){
                                     throw new BankAccountIsNotCurrentAccountException();
                                 }
-                                ((ContaCorrente) conta).getCartaoCredito().ajustarLimite();
+                                ((ContaCorrente) conta).getCartaoCredito().ajustarLimite(sc);
                             }catch (BankAccountNotFoundException | BankAccountIsNotCurrentAccountException | YouAreNotLoggedInException e){
                                 System.out.println(e.getMessage());
                             }

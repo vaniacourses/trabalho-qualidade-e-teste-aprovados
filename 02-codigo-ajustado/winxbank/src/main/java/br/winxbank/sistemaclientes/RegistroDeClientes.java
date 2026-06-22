@@ -20,37 +20,60 @@ public class RegistroDeClientes {
      * Este método é responsável por cadastrar um cliente no registro de clientes.
      * Se o cliente criar uma conta com mais de 100 mil, ele se torna ClienteWix.
      */
-    public void cadastrarCliente(){
-        Scanner sc = new Scanner(System.in);
+    public void cadastrarCliente(Scanner sc) {
+
         System.out.println("Você está cadastrando um cliente\nDigite o nome:");
         String nome = sc.nextLine();
+
         System.out.println("Digite o cpf:");
         String cpf = sc.nextLine();
+
         boolean cpfExistente = checarCpf(cpf);
-        if(cpfExistente || clientes.isEmpty()){
+
+        if (cpfExistente || clientes.isEmpty()) {
+
             Cliente cliente = new Cliente(nome, cpf);
-            Conta conta = Banco.getInstancia().abrirNovaConta();
+
+            Conta conta = Banco.getInstancia().abrirNovaConta(sc);
+
             cliente.setContas(conta);
-            if(conta.getSaldo() >= 100000){
+
+            if (conta.getSaldo() >= 100000) {
+
                 System.out.println("Parabéns, você tem direito a ser ClienteWinx!");
+
                 ClienteWinx clienteWinx = new ClienteWinx(nome, cpf, 0);
-                Movimentacao movimentacao = new Movimentacao(conta.getSaldo(), Movimentacao.TipoDaMovimentacao.ENTRADA);
+
+                Movimentacao movimentacao = new Movimentacao(
+                        conta.getSaldo(),
+                        Movimentacao.TipoDaMovimentacao.ENTRADA);
+
                 conta.setExtrato(movimentacao);
+
                 clienteWinx.setContas(conta);
+
                 clientes.add(clienteWinx);
-                if(conta.getClass() == ContaPoupanca.class){
+
+                if (conta.getClass() == ContaPoupanca.class) {
                     ((ContaPoupanca) conta).setInformeRendimento(movimentacao);
                 }
-            }
-            else if(conta.getSaldo() < 100000) {
-                Movimentacao movimentacao = new Movimentacao(conta.getSaldo(), Movimentacao.TipoDaMovimentacao.ENTRADA);
+
+            } else {
+
+                Movimentacao movimentacao = new Movimentacao(
+                        conta.getSaldo(),
+                        Movimentacao.TipoDaMovimentacao.ENTRADA);
+
                 conta.setExtrato(movimentacao);
+
                 clientes.add(cliente);
-                if(conta.getClass() == ContaPoupanca.class){
+
+                if (conta.getClass() == ContaPoupanca.class) {
                     ((ContaPoupanca) conta).setInformeRendimento(movimentacao);
                 }
             }
-        }else{
+
+        } else {
             System.out.println("Usuario nao pode ser criado. CPF ja existente no registro.");
         }
     }
