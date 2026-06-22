@@ -66,7 +66,7 @@ Contém toda a documentação do projeto:
 https://drive.google.com/drive/folders/1HbgsCrJOxppjkBLzBrIuYCrYgQIeA0KG
 
 📄 [Relatório da Segunda Entrega](https://docs.google.com/document/d/1DgPqZfuuTrnbz3MEzYbDMv5AcLMo_mCYdBJ8JwxU5mE/)
-PDF: https://drive.google.com/file/d/1Jc9dkpRyENPX1XM-mt6lcAngLZrv4kLO/view?usp=drive_link
+PDF: [https://drive.google.com/file/d/1Jc9dkpRyENPX1XM-mt6lcAngLZrv4kLO/view?usp=drive_link](https://drive.google.com/file/d/1Koq54zB7j-sbd9hBo1JGQXc_KSkFNzA7/view?usp=drive_link)
 
 ### 📂 04-apresentacao
 Contém os materiais utilizados para apresentação do projeto.
