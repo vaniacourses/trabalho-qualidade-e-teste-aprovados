@@ -1,6 +1,0 @@
-\# Diagramas
-
-
-
-Status: Em desenvolvimento
-
